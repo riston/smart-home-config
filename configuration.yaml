@@ -169,35 +169,6 @@ sensor:
     type: time
     start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
     end: '{{ now() }}'
-
-  # Measuring Wifi signals
-  
-  # - platform: mqtt
-  #   state_topic: "sonoff-bridge/tele/STATE"
-  #   name: "Sonoff Bridge Signal"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{value_json['Wifi'].RSSI }}"
-  #   availability_topic: "sonoff-bridge/tele/LWT"
-  #   payload_available: "Online"
-  #   payload_not_available: "Offline"
-
-  # - platform: mqtt
-  #   state_topic: "sonoff-basic-v1/tele/STATE"
-  #   name: "Sonoff Basic v1 Signal"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{value_json['Wifi'].RSSI }}"
-  #   availability_topic: "sonoff-basic-v1/tele/LWT"
-  #   payload_available: "Online"
-  #   payload_not_available: "Offline"
-    
-  # - platform: mqtt
-  #   state_topic: "sonoff-socket/tele/STATE"
-  #   name: "Sonoff Socket Signal"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{value_json['Wifi'].RSSI }}"
-  #   availability_topic: "sonoff-socket/tele/LWT"
-  #   payload_available: "Online"
-  #   payload_not_available: "Offline"
     
 binary_sensor:
   - platform: mqtt
@@ -321,11 +292,6 @@ notify:
       - !secret email_recipient_second
     sender_name: Tark Kodu
     
-# Twilio
-#twilio:
-#  account_sid: !secret twilio_account_sid
-#  auth_token: !secret twilio_auth_token
-
 # Text to speech
 tts:
   - platform: google
