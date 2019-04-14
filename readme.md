@@ -4,7 +4,7 @@
 
 Using lovelace ui.
 
-![Overview][./images/screen.png]
+![][images/screen.png?raw=true "Overview"]
 
 ## Hardware
 
