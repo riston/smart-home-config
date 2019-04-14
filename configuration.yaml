@@ -1,0 +1,338 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret latitude
+  longitude: !secret longitude
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: !secret elevation
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Tallinn
+  # Customization file
+  customize: !include customize.yaml
+
+# Enables the frontend
+frontend:
+
+lovelace:
+  mode: yaml
+
+system_health:
+
+# Enables configuration UI
+config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+mqtt:
+  broker: !secret home_assistant_host
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  discovery: true
+  
+# Enables support for tracking state changes over time
+history:
+
+recorder:
+  purge_keep_days: 3
+  purge_interval: 2
+  exclude:
+    entities:
+      - media_player.webos_tv
+
+# View all events in a logbook
+logbook:
+
+# Enables a map showing the location of tracked devices
+map:
+
+# Track the sun
+sun:
+
+camera:
+  - platform: mjpeg
+    mjpeg_url: !secret home_camera_host
+
+input_select:
+  monitor_status:
+    name: Monitor Status
+    options:
+      - Idle
+      - Working
+      - Offline
+    initial: Idle
+
+# Sensors
+sensor:
+  # Weather prediction
+  - platform: yr
+    monitored_conditions:
+     - temperature
+     - symbol
+     - humidity
+
+  - platform: template
+    sensors:
+      monitor_status:
+        value_template: '{{ states.input_select.monitor_status.state}}'
+        friendly_name: 'Monitor Status'
+
+  - platform: mqtt
+    state_topic: 'rpi-sensor/tele/STATE'
+    name: 'Temperature Living Room'
+    unit_of_measurement: '°C'
+    value_template: '{{ value_json.Temperature }}'
+    
+  - platform: mqtt
+    state_topic: 'rpi-sensor/tele/STATE'
+    name: 'Humidity Living Room'
+    unit_of_measurement: '%'
+    value_template: '{{ value_json.Humidity }}'
+    
+  - platform: mqtt
+    state_topic: 'home/temperature-sensor-one'
+    name: 'Temperature second'
+    unit_of_measurement: '°C'
+    value_template: '{{ value_json.temperature }}'
+    
+  - platform: mqtt
+    state_topic: 'home/temperature-sensor-one'
+    name: 'Humidity second'
+    unit_of_measurement: '%'
+    value_template: '{{ value_json.humidity }}'
+    
+  - platform: mqtt
+    state_topic: 'home/temperature-sensor-second'
+    name: 'Temperature first'
+    unit_of_measurement: '°C'
+    value_template: '{{ value_json.temperature }}'
+    
+  - platform: mqtt
+    state_topic: 'home/temperature-sensor-second'
+    name: 'Humidity first'
+    unit_of_measurement: '%'
+    value_template: '{{ value_json.humidity }}'
+    
+  - platform: mqtt
+    name: "Moving PIR"
+    state_topic: "home/temperature-sensor-second"
+    value_template: '{{ value_json.motion }}'
+    qos: 1
+    
+  - platform: history_stats
+    name: Fridge Open Today
+    entity_id: binary_sensor.fridge
+    state: 'on'
+    type: count
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+    
+  - platform: history_stats
+    name: Hall Door Open Today
+    entity_id: binary_sensor.hall_door
+    state: 'on'
+    type: count
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+    
+  - platform: history_stats
+    name: Main Door Open Today
+    entity_id: binary_sensor.door
+    state: 'on'
+    type: count
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+    
+  - platform: history_stats
+    name: TV On today
+    entity_id: media_player.webos_tv
+    state: 'playing'
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+
+  # Measuring Wifi signals
+  
+  # - platform: mqtt
+  #   state_topic: "sonoff-bridge/tele/STATE"
+  #   name: "Sonoff Bridge Signal"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{value_json['Wifi'].RSSI }}"
+  #   availability_topic: "sonoff-bridge/tele/LWT"
+  #   payload_available: "Online"
+  #   payload_not_available: "Offline"
+
+  # - platform: mqtt
+  #   state_topic: "sonoff-basic-v1/tele/STATE"
+  #   name: "Sonoff Basic v1 Signal"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{value_json['Wifi'].RSSI }}"
+  #   availability_topic: "sonoff-basic-v1/tele/LWT"
+  #   payload_available: "Online"
+  #   payload_not_available: "Offline"
+    
+  # - platform: mqtt
+  #   state_topic: "sonoff-socket/tele/STATE"
+  #   name: "Sonoff Socket Signal"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{value_json['Wifi'].RSSI }}"
+  #   availability_topic: "sonoff-socket/tele/LWT"
+  #   payload_available: "Online"
+  #   payload_not_available: "Offline"
+    
+binary_sensor:
+  - platform: mqtt
+    name: "Fridge"
+    state_topic: "sonoff-bridge/tele/RESULT"
+    value_template: '{{value_json.RfReceived.Data}}'
+    device_class: "door"
+    payload_on: "2CBF0A"
+    payload_off: "2CBF0E"
+    qos: 1
+
+  - platform: mqtt
+    name: "Hall door"
+    device_class: "door"
+    state_topic: "sonoff-bridge/tele/RESULT"
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: "2E970A"
+    payload_off: "2E970E"
+    qos: 1
+
+  - platform: mqtt
+    state_topic: "sonoff-bridge/tele/RESULT"
+    name: 'Digoo Motion'
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: 'E28186'
+    device_class: motion
+    off_delay: 10
+    qos: 1
+
+  - platform: mqtt
+    name: "Door"
+    device_class: "door"
+    state_topic: "sonoff-bridge/tele/RESULT"
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: "2F420A"
+    payload_off: "2F420E"
+    qos: 1
+
+  - platform: mqtt
+    name: "Water Leak"
+    device_class: "moisture"
+    state_topic: "sonoff-bridge/tele/RESULT"
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: "D83212"
+    payload_off: "D83212Off"
+    qos: 1
+
+    # Remote controls
+    # A - 2E1A22
+    # B - 2E1A41
+    # C - 9EEF31
+    # D - 2E1A21
+  - platform: mqtt
+    state_topic: "sonoff-bridge/tele/RESULT"
+    name: 'Remote Control A'
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: '2E1A22'
+    device_class: opening
+    off_delay: 1
+    qos: 1
+    
+  - platform: mqtt
+    state_topic: "sonoff-bridge/tele/RESULT"
+    name: 'Remote Control B'
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: '2E1A41'
+    device_class: opening
+    off_delay: 1
+    qos: 1
+
+  - platform: mqtt
+    state_topic: "sonoff-bridge/tele/RESULT"
+    name: 'Remote Control C'
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: '9EEF31'
+    device_class: opening
+    off_delay: 1
+    qos: 1
+
+  - platform: mqtt
+    state_topic: "sonoff-bridge/tele/RESULT"
+    name: 'Remote Control D'
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: '2E1A21'
+    device_class: opening
+    off_delay: 1
+    qos: 1
+
+fastdotcom:
+  scan_interval:
+    minutes: 60
+      
+wake_on_lan:
+
+media_player:
+  - platform: webostv
+    name: webOS TV
+    host: !secret livingroom_tv_host
+    turn_on_action:
+      service: wake_on_lan.send_magic_packet
+      data:
+        mac: !secret livingroom_mac
+
+notify:
+  - platform: webostv
+    host: !secret livingroom_tv_host
+    name: livingroom_tv
+    filename: webostv.conf
+
+  - name: email
+    platform: smtp
+    server: smtp.gmail.com
+    port: 587
+    timeout: 15
+    sender: !secret email_sender
+    encryption: starttls
+    username: !secret email_username
+    password: !secret email_password
+    recipient:
+      - !secret email_recipient_first
+      - !secret email_recipient_second
+    sender_name: Tark Kodu
+    
+# Twilio
+#twilio:
+#  account_sid: !secret twilio_account_sid
+#  auth_token: !secret twilio_auth_token
+
+# Text to speech
+tts:
+  - platform: google
+
+# Cloud
+cloud:
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml

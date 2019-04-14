@@ -1,0 +1,244 @@
+- id: '1546613456223'
+  alias: Turn light when there is movement
+  trigger:
+  - entity_id: sensor.moving_pir
+    from: '0'
+    platform: state
+    to: '1'
+  condition:
+    condition: or
+    conditions:
+    - condition: sun
+      after: sunset
+    - condition: sun
+      before: sunrise
+  action:
+  - service: switch.turn_on
+    entity_id: switch.sonoff_2
+
+- id: mqtt-discovery
+  alias: Enable MQTT discovery for all devices
+  trigger:
+    platform: homeassistant
+    event: start
+  action:
+  - service: mqtt.publish
+    data:
+      topic: sonoffs/cmnd/SetOption19
+      payload: '1'
+      
+- alias: "Power state on HA start-up"
+  trigger:
+    platform: homeassistant
+    event: start
+  action:
+    - service: mqtt.publish
+      data:
+        topic: sonoffs/cmnd/state
+        payload: ""
+    - service: mqtt.publish
+      data:
+        topic: sonoffs/cmnd/POWER
+    - service: mqtt.publish
+      data:
+        topic: sonoffs/cmnd/POWER2
+    - service: mqtt.publish
+      data:
+        topic: sonoffs/cmnd/POWER3  
+
+- alias: Turn water leak message on
+  trigger:
+  - entity_id: binary_sensor.water_leak
+    from: 'off'
+    to: 'on'
+    platform: state
+  action:
+  - service: notify.livingroom_tv
+    data:
+      message: "Vee leke !!!"
+  - service: notify.email
+    data:
+        title: 'Vesi lekib'
+        message: 'Vesi lekib, kontrolli!'
+
+- alias: Turn water leak off
+  trigger:
+  - entity_id: binary_sensor.water_leak
+    from: 'off'
+    to: 'on'
+    for:
+      minutes: 5
+    platform: state
+  action:
+  - service: mqtt.publish
+    data:
+      topic: sonoff-bridge/tele/RESULT
+      payload: D83212Off
+
+- id: '1546615924808'
+  alias: Turn light off after there is no movement
+  trigger:
+  - entity_id: sensor.moving_pir
+    for:
+      minutes: 2
+    platform: state
+    to: '0'
+  condition: []
+  action:
+  - service: switch.turn_off
+    entity_id: switch.sonoff_2
+
+- id: '1546613458555'
+  alias: Turn socket on movement
+  trigger:
+  - entity_id: binary_sensor.digoo_motion
+    from: 'off'
+    platform: state
+    to: 'on'
+  condition:
+    condition: or
+    conditions:
+    - condition: sun
+      after: sunset
+    - condition: sun
+      before: sunrise
+  action:
+    - service: switch.turn_on
+      entity_id: switch.sonoff
+    
+- id: '1546613458556'
+  alias: 'Turn socket off on movement'
+  trigger:
+  - entity_id: binary_sensor.digoo_motion
+    for:
+      seconds: 15
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+    - service: switch.turn_off
+      entity_id: switch.sonoff
+      
+- id: remote-trigger-a-socket
+  alias: 'Toggle light on remote control'
+  trigger:
+  - entity_id: binary_sensor.remote_control_a
+    platform: state
+    to: 'on'
+  action:
+  - service: light.toggle
+    entity_id: light.sonoff
+      
+- id: remote-trigger-b-socket
+  alias: 'Toggle central light on remote control'
+  trigger:
+  - entity_id: binary_sensor.remote_control_b
+    platform: state
+    to: 'on'
+  action:
+  - service: switch.toggle
+    entity_id: switch.sonoff
+    
+- id: remote-trigger-c-socket
+  alias: 'Show temperature in TV'
+  trigger:
+  - entity_id: binary_sensor.remote_control_c
+    platform: state
+    to: 'on'
+  action:
+    service: notify.livingroom_tv
+    data:
+      message: "Õues {{ states.sensor.yr_temperature.state }}°C - {{ states.sensor.yr_humidity.state }}%,  all korrusel {{ states('sensor.temperature_living_room') }} °C - {{ states('sensor.humidity_living_room') }}%"
+      
+- id: remote-trigger-c-socket
+  alias: 'Show TV runtime'
+  trigger:
+  - entity_id: binary_sensor.remote_control_d
+    platform: state
+    to: 'on'
+  action:
+    service: notify.livingroom_tv
+    data:
+      message: "Teler täna sees olnud {{ states('sensor.tv_on_today') }} tundi"
+    
+- id: sunrise-notify
+  alias: 'Send notification when sun rises'
+  trigger:
+    platform: sun
+    event: sunrise
+    offset: '-01:00:00'
+  action:
+    service: notify.livingroom_tv
+    data:
+      message: 'Päike tõuseb tunni aja pärast.'
+
+- id: sunset-notify
+  alias: 'Send notification when sun sets'
+  trigger:
+    platform: sun
+    event: sunset
+    offset: '-01:00:00'
+  action:
+    service: notify.livingroom_tv
+    data:
+      message: 'Päike loojub tunni aja pärast.'
+
+# Sonoff POW Monitor power
+# Working condition
+- alias: Set monitor working when power usage increase
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.pow_energy_power
+      above: 10
+  condition:
+    condition: or
+    conditions:
+      - condition: state
+        entity_id: sensor.monitor_status
+        state: Idle
+      - condition: state
+        entity_id: sensor.monitor_status
+        state: Offline
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.monitor_status
+        option: Working
+
+- alias: Set monitor into standby when power usage drops
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.pow_energy_power
+      below: 10
+      for:
+        minutes: 1
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: input_select.monitor_status
+        state: Working
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.monitor_status
+        option: Idle
+ 
+- alias: Set monitor into offline state when no power
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.pow_energy_power
+      below: 1
+      for:
+        minutes: 5
+  condition:
+    condition: or
+    conditions:
+      - condition: state
+        entity_id: input_select.monitor_status
+        state: Idle
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.monitor_status
+        option: Offline
