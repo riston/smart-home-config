@@ -1,0 +1,80 @@
+
+sensor:
+  - platform: mqtt
+    name: "Moving PIR"
+    state_topic: "home/temperature-sensor-second"
+    value_template: '{{ value_json.motion }}'
+    qos: 1
+
+binary_sensor:
+  - platform: mqtt
+    state_topic: "sonoff-bridge/tele/RESULT"
+    name: 'Digoo Motion'
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: 'E28186'
+    device_class: motion
+    off_delay: 10
+    qos: 1
+
+automation:
+  - id: '1546613456223'
+    alias: Turn light when there is movement
+    trigger:
+    - entity_id: sensor.moving_pir
+      from: '0'
+      platform: state
+      to: '1'
+    condition:
+      condition: or
+      conditions:
+      - condition: sun
+        after: sunset
+      - condition: sun
+        before: sunrise
+    action:
+    - service: switch.turn_on
+      entity_id: switch.sonoff_2
+        
+  - id: '1546615924808'
+    alias: Turn light off after there is no movement
+    trigger:
+    - entity_id: sensor.moving_pir
+      for:
+        minutes: 2
+      platform: state
+      to: '0'
+    condition: []
+    action:
+    - service: switch.turn_off
+      entity_id: switch.sonoff_2
+
+  - id: '1546613458556'
+    alias: 'Turn socket off on movement'
+    trigger:
+    - entity_id: binary_sensor.digoo_motion
+      for:
+        seconds: 15
+      platform: state
+      to: 'off'
+    condition: []
+    action:
+      - service: switch.turn_off
+        entity_id: switch.sonoff
+          
+  - id: '1546613458555'
+    alias: Turn socket on movement
+    trigger:
+    - entity_id: binary_sensor.digoo_motion
+      from: 'off'
+      platform: state
+      to: 'on'
+    condition:
+      condition: or
+      conditions:
+      - condition: sun
+        after: sunset
+      - condition: sun
+        before: sunrise
+    action:
+      - service: switch.turn_on
+        entity_id: switch.sonoff

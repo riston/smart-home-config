@@ -1,0 +1,82 @@
+
+input_select:
+  monitor_status:
+    name: Monitor Status
+    options:
+      - Idle
+      - Working
+      - Offline
+    initial: Idle
+
+sensor:
+  - platform: template
+    sensors:
+      monitor_status:
+        value_template: '{{ states.input_select.monitor_status.state}}'
+        friendly_name: 'Monitor Status'
+
+homeassistant:
+  customize:
+    sensor.monitor_status:
+      icon: mdi:television
+
+automation:
+  # Sonoff POW Monitor power
+  # Working condition
+  - alias: Set monitor working when power usage increase
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.pow_energy_power
+        above: 10
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: sensor.monitor_status
+          state: Idle
+        - condition: state
+          entity_id: sensor.monitor_status
+          state: Offline
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.monitor_status
+          option: Working
+
+  - alias: Set monitor into standby when power usage drops
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.pow_energy_power
+        below: 10
+        for:
+          minutes: 1
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: input_select.monitor_status
+          state: Working
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.monitor_status
+          option: Idle
+  
+  - alias: Set monitor into offline state when no power
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.pow_energy_power
+        below: 1
+        for:
+          minutes: 5
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: input_select.monitor_status
+          state: Idle
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.monitor_status
+          option: Offline

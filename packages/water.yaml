@@ -1,0 +1,40 @@
+
+binary_sensor:
+  - platform: mqtt
+    name: "Water Leak"
+    device_class: "moisture"
+    state_topic: "sonoff-bridge/tele/RESULT"
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: "D83212"
+    payload_off: "D83212Off"
+    qos: 1
+
+automation:
+  - alias: Turn water leak message on
+    trigger:
+    - entity_id: binary_sensor.water_leak
+      from: 'off'
+      to: 'on'
+      platform: state
+    action:
+    - service: notify.livingroom_tv
+      data:
+        message: "Vee leke !!!"
+    - service: notify.email
+      data:
+          title: 'Vesi lekib'
+          message: 'Vesi lekib ({{ trigger.from_state.name }}), kontrolli!'
+
+  - alias: Turn water leak off
+    trigger:
+    - entity_id: binary_sensor.water_leak
+      from: 'off'
+      to: 'on'
+      for:
+        minutes: 5
+      platform: state
+    action:
+    - service: mqtt.publish
+      data:
+        topic: sonoff-bridge/tele/RESULT
+        payload: D83212Off

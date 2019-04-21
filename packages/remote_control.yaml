@@ -1,0 +1,86 @@
+
+binary_sensor:
+    # Remote controls
+    # A - 2E1A22
+    # B - 2E1A41
+    # C - 9EEF31
+    # D - 2E1A21
+  - platform: mqtt
+    state_topic: "sonoff-bridge/tele/RESULT"
+    name: 'Remote Control A'
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: '2E1A22'
+    device_class: opening
+    off_delay: 1
+    qos: 1
+
+  - platform: mqtt
+    state_topic: "sonoff-bridge/tele/RESULT"
+    name: 'Remote Control B'
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: '2E1A41'
+    device_class: opening
+    off_delay: 1
+    qos: 1
+
+  - platform: mqtt
+    state_topic: "sonoff-bridge/tele/RESULT"
+    name: 'Remote Control C'
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: '9EEF31'
+    device_class: opening
+    off_delay: 1
+    qos: 1
+
+  - platform: mqtt
+    state_topic: "sonoff-bridge/tele/RESULT"
+    name: 'Remote Control D'
+    value_template: '{{value_json.RfReceived.Data}}'
+    payload_on: '2E1A21'
+    device_class: opening
+    off_delay: 1
+    qos: 1
+
+automation:
+  - id: remote-trigger-a-socket
+    alias: 'Toggle light on remote control'
+    trigger:
+    - entity_id: binary_sensor.remote_control_a
+      platform: state
+      to: 'on'
+    action:
+    - service: light.toggle
+      entity_id: light.sonoff
+        
+  - id: remote-trigger-b-socket
+    alias: 'Toggle central light on remote control'
+    trigger:
+    - entity_id: binary_sensor.remote_control_b
+      platform: state
+      to: 'on'
+    action:
+    - service: switch.toggle
+      entity_id: switch.sonoff
+      
+  - id: remote-trigger-c-socket
+    alias: 'Show temperature in TV'
+    trigger:
+    - entity_id: binary_sensor.remote_control_c
+      platform: state
+      to: 'on'
+    action:
+      service: notify.livingroom_tv
+      data:
+        message: "Õues {{ states.sensor.yr_temperature.state }}°C - {{ states.sensor.yr_humidity.state }}%,  all korrusel {{ states('sensor.temperature_living_room') }} °C - {{ states('sensor.humidity_living_room') }}%"
+        
+  - id: remote-trigger-c-socket
+    alias: 'Show TV runtime'
+    trigger:
+    - entity_id: binary_sensor.remote_control_d
+      platform: state
+      to: 'on'
+    action:
+      service: notify.livingroom_tv
+      data:
+        message: "Teler täna sees olnud {{ states('sensor.tv_on_today') }} tundi"
+      
