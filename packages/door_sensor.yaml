@@ -70,4 +70,4 @@ automation:
     - service: notify.email
       data:
           title: 'Patarei on tühi'
-          message: '{{ trigger.from_state.name }} patarei saab tühjaks'
+          message: 'patarei saab tühjaks, kontrolli'

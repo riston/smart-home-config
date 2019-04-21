@@ -161,8 +161,7 @@
               name: C
             - entity: binary_sensor.remote_control_d
               name: D
-            
-            
+
         - type: entities
           title: Counters
           show_header_toggle: false

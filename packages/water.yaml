@@ -23,7 +23,7 @@ automation:
     - service: notify.email
       data:
           title: 'Vesi lekib'
-          message: 'Vesi lekib ({{ trigger.from_state.name }}), kontrolli!'
+          message: 'Vesi lekib, kontrolli!'
 
   - alias: Turn water leak off
     trigger:
