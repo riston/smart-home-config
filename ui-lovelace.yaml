@@ -24,7 +24,7 @@
           show_header_toggle: true
           entities:
             - entity: switch.pow
-              name: PC monitor
+              name: Kitchen light
             - entity: light.sonoff
               name: TV light
             - entity: switch.sonoff
@@ -143,9 +143,12 @@
           title: Motion & other
           show_header_toggle: false
           entities:
-            - sensor.monitor_status
-            - binary_sensor.digoo_motion
-            - sensor.moving_pir
+            - entity: binary_sensor.motion_kitchen
+              name: Kitchen
+            - entity: binary_sensor.digoo_motion
+              name: Staircase
+            - entity: sensor.moving_pir
+              name: Second floor 
             - binary_sensor.water_leak
 
         - type: glance

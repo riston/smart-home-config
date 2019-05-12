@@ -73,14 +73,13 @@ automation:
       data:
         message: "Õues {{ states.sensor.yr_temperature.state }}°C - {{ states.sensor.yr_humidity.state }}%,  all korrusel {{ states('sensor.temperature_living_room') }} °C - {{ states('sensor.humidity_living_room') }}%"
         
-  - id: remote-trigger-c-socket
-    alias: 'Show TV runtime'
+  - id: remote-trigger-d-socket
+    alias: 'Toggle kitchen light'
     trigger:
     - entity_id: binary_sensor.remote_control_d
       platform: state
       to: 'on'
     action:
-      service: notify.livingroom_tv
-      data:
-        message: "Teler täna sees olnud {{ states('sensor.tv_on_today') }} tundi"
+      service: switch.toggle
+      entity_id: switch.pow
       

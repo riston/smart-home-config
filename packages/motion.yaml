@@ -8,15 +8,51 @@ sensor:
 
 binary_sensor:
   - platform: mqtt
-    state_topic: "sonoff-bridge/tele/RESULT"
-    name: 'Digoo Motion'
-    value_template: '{{value_json.RfReceived.Data}}'
-    payload_on: 'E28186'
+    name: "Digoo Motion"
     device_class: motion
+    state_topic: "sonoff-bridge/tele/RESULT"
+    value_template: "{{value_json.RfReceived.Data}}"
+    payload_on: "E28186"
     off_delay: 10
     qos: 1
 
+  - platform: mqtt
+    name: "Motion Kitchen"
+    device_class: motion
+    state_topic: "sonoff-bridge/tele/RESULT"
+    value_template: "{{value_json.RfReceived.Data}}"
+    payload_on: "037526"
+    off_delay: 120
+    qos: 1
+
 automation:
+  - alias: Turn kitchen light on movement
+    trigger:
+    - entity_id: binary_sensor.motion_kitchen
+      platform: state
+      from: 'off'
+      to: 'on'
+    condition:
+      condition: or
+      conditions:
+      - condition: sun
+        after: sunset
+      - condition: sun
+        before: sunrise
+    action:
+      - service: switch.turn_on
+        entity_id: switch.pow
+
+  - alias: Turn kitchen light off when no movement
+    trigger:
+    - entity_id: binary_sensor.motion_kitchen
+      platform: state
+      from: 'on'
+      to: 'off'
+    action:
+      - service: switch.turn_off
+        entity_id: switch.pow
+
   - id: '1546613456223'
     alias: Turn light when there is movement
     trigger:
