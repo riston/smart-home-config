@@ -71,3 +71,26 @@ automation:
       data:
           title: 'Patarei on tühi'
           message: 'patarei saab tühjaks, kontrolli'
+
+  - alias: Play sound when fridge is open
+    trigger:
+    - entity_id: binary_sensor.fridge
+      from: 'off'
+      to: 'on'
+      platform: state
+    condition:
+      condition: and
+      conditions:
+      - condition: sun
+        before: sunset
+      - condition: sun
+        after: sunrise
+    action:
+    - service: media_player.play_media
+      data:
+        entity_id: media_player.mpd
+        media_content_type: 'music'
+      data_template:
+        # TODO: Remove hardcoded host url
+        media_content_id: > 
+          http://192.168.1.228:8123/local/fridge-{{range(0,6) | random}}.mp3

@@ -45,6 +45,12 @@ discovery:
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
 
+panel_iframe:  
+  music:  
+    title: 'Pi Music'  
+    icon: 'mdi:music-box-outline'  
+    url: !secret media_player_host_url
+
 mqtt:
   broker: !secret home_assistant_host
   username: !secret mqtt_username
@@ -93,18 +99,7 @@ sensor:
      - temperature
      - symbol
      - humidity
-
-  # - platform: darksky
-  #   api_key: !secret darksky_api_key
-  #   forecast:
-  #     - 0
-  #   hourly_forecast:
-  #     - 0
-  #     - 1
-  #   monitored_conditions:
-  #     - summary
-  #     - icon
-  #     - temperature
+     - cloudiness
 
   - platform: template
     sensors:
@@ -152,7 +147,7 @@ wake_on_lan:
 
 media_player:
   - platform: mpd
-    host: 192.168.1.230
+    host: !secret media_player_host
 
   - platform: webostv
     name: webOS TV

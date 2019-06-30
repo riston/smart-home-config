@@ -1,0 +1,76 @@
+
+# sensor:  
+#   - platform: mqtt  
+#     state_topic: "bruh/sensornode1"  
+#     name: "SN1 Humidity"  
+#     unit_of_measurement: "%"  
+#     value_template: '{{ value_json.humidity | float }}'  
+  
+#   - platform: mqtt  
+#     state_topic: "bruh/sensornode1"  
+#     name: "SN1 LDR"
+#     ##This sensor is not calibrated to actual LUX. Rather, this a map of the input voltage ranging from 0 - 100.
+#     unit_of_measurement: "LUX"  
+#     value_template: '{{ value_json.ldr | float }}'  
+  
+#   # - platform: mqtt  
+#   #   state_topic: "bruh/sensornode1"  
+#   #   name: "SN1 PIR"  
+#   #   value_template: '{{ value_json.motion }}'  
+  
+#   - platform: mqtt  
+#     state_topic: "bruh/sensornode1"  
+#     name: "SN1 Temperature"  
+#     unit_of_measurement: "°C"  
+#     value_template: '{{ value_json.temperature | float }}'  
+
+sensor:
+  - platform: min_max
+    type: max
+    name: Max Beacon A RSSI
+    entity_ids:
+      - sensor.xiaomi_amazfit_bip
+      - sensor.xiaomi_mi_3
+      - sensor.xiaomi_mi1
+
+group:  
+  multi_sensor_a:  
+    name: Multi Sensor A  
+    entities:  
+      - sensor.humidity
+      - sensor.temperature
+      - sensor.multisensor_brightness
+      - light.sensor_control_light
+      - sensor.xiaomi_amazfit_bip
+      - binary_sensor.xiaomi_amazfit_bip_presence
+      - sensor.xiaomi_mi_3
+      - binary_sensor.xiaomi_mi_3_presence
+      - sensor.xiaomi_mi1
+      - binary_sensor.xiaomi_mi1_presence
+
+automation:
+  - alias: Turn LED light ON when device is close to beacon
+    trigger:
+    - platform: numeric_state
+      entity_id: sensor.max_beacon_a_rssi
+      for:
+        seconds: 5
+      above: -70
+    action:
+    - service: light.turn_on
+      entity_id: light.sensor_control_light
+      data:
+        rgb_color: [0, 255, 0]
+
+  - alias: Turn LED light OFF when device is too far from beacon
+    trigger:
+    - platform: numeric_state
+      entity_id: sensor.max_beacon_a_rssi
+      for:
+        seconds: 5
+      below: -70
+    action:
+    - service: light.turn_on
+      entity_id: light.sensor_control_light
+      data:
+        rgb_color: [255, 0, 0]

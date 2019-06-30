@@ -7,7 +7,8 @@
 !.gitignore
 !*.md
 !images/screen.png
-!packages   
+!packages
+!www/fridge*
 
 # Ignore folders.
 .storage
