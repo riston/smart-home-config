@@ -1,2 +1,7 @@
 sensor.monitor_status:
   icon: mdi:television
+
+sensor.rv_status:
+  entity_picture: /local/tiger.jpg
+sensor.rn_status:
+  entity_picture: /local/rhino.jpg

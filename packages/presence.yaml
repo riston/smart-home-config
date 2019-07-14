@@ -1,0 +1,246 @@
+
+# Making presence not so binary, good article about that 
+# https://philhawthorne.com/making-home-assistants-presence-detection-not-so-binary/
+input_select:
+  rv_status_dropdown:
+    name: RV
+    options:
+      - Home
+      - Just Arrived
+      - Just Left
+      - Away
+      - Extended Away
+    initial: Home
+  rn_status_dropdown:
+    name: RN
+    options:
+      - Home
+      - Just Arrived
+      - Just Left
+      - Away
+      - Extended Away
+    initial: Home
+
+sensor:
+  - platform: template
+    sensors:
+      rv_status:
+        value_template: '{{ states.input_select.rv_status_dropdown.state }}'
+        friendly_name: 'RV'
+      rn_status:
+        value_template: '{{ states.input_select.rn_status_dropdown.state }}'
+        friendly_name: 'RN'
+group:
+  people_status:
+    name: People Status
+    entities:
+      - sensor.rv_status
+      - sensor.rn_status
+
+device_tracker:
+  - platform: nmap_tracker
+    hosts:
+      # RV PC
+      - 192.168.1.199
+      # Tablet
+      - 192.168.1.109
+      # MB
+      - 192.168.1.177
+  - platform: bluetooth_tracker
+
+binary_sensor:
+ - platform: bayesian
+   prior: 0.5
+   name: RV Presence
+   probability_threshold: 0.9
+   observations:
+   - entity_id: 'binary_sensor.xiaomi_mi_3_presence'
+     prob_given_true: 0.7
+     prob_given_false: 0.3
+     platform: 'state'
+     to_state: 'on'
+   - entity_id: 'binary_sensor.xiaomi_mi_3_presence_2'
+     prob_given_true: 0.7
+     prob_given_false: 0.3
+     platform: 'state'
+     to_state: 'on'
+   - entity_id: 'device_tracker.lg_wine_smart'
+     prob_given_true: 0.9
+     prob_given_false: 0.2
+     platform: 'state'
+     to_state: 'home'
+
+ - platform: bayesian
+   prior: 0.5
+   name: RN Presence
+   probability_threshold: 0.9
+   observations:
+   - entity_id: 'binary_sensor.xiaomi_amazfit_bip_presence'
+     prob_given_true: 0.7
+     prob_given_false: 0.3
+     platform: 'state'
+     to_state: 'on'
+   - entity_id: 'binary_sensor.xiaomi_amazfit_bip_presence_2'
+     prob_given_true: 0.7
+     prob_given_false: 0.3
+     platform: 'state'
+     to_state: 'on'
+   - entity_id: 'device_tracker.mi_phone'
+     prob_given_true: 0.9
+     prob_given_false: 0.2
+     platform: 'state'
+     to_state: 'home'
+
+automation: 
+- alias: Mark person as just arrived
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.rv_presence
+      from: 'off'
+      to: 'on'
+    - platform: state
+      entity_id: binary_sensor.rn_presence
+      from: 'off'
+      to: 'on'
+  action:
+    - service: input_select.select_option
+      data_template:
+        entity_id: >
+          {% if trigger.entity_id == 'binary_sensor.rv_presence' %}
+            input_select.rv_status_dropdown
+          {% else %}
+            input_select.rn_status_dropdown
+          {% endif %}
+        option: Just Arrived
+
+- alias: Mark person as home
+  trigger:
+    - platform: state
+      entity_id: input_select.rv_status_dropdown
+      to: 'Just Arrived'
+      for:
+        minutes: 10
+    - platform: state
+      entity_id: input_select.rn_status_dropdown
+      to: 'Just Arrived'
+      for:
+        minutes: 10
+    - platform: state
+      entity_id: input_select.rv_status_dropdown
+      from: 'Just Left'
+      to: 'Just Arrived'
+    - platform: state
+      entity_id: input_select.rn_status_dropdown
+      from: 'Just Left'
+      to: 'Just Arrived'
+  action:
+    - service: input_select.select_option
+      data_template:
+        entity_id: >
+          {% if trigger.entity_id == 'input_select.rv_status_dropdown' %}
+            input_select.rv_status_dropdown
+          {% else %}
+            input_select.rn_status_dropdown
+          {% endif %}
+        option: Home
+
+- alias: Mark person as just left
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.rv_presence
+      from: 'on'
+      to: 'off'
+    - platform: state
+      entity_id: binary_sensor.rn_presence
+      from: 'on'
+      to: 'off'
+  action:
+    - service: input_select.select_option
+      data_template:
+        entity_id: >
+          {% if trigger.entity_id == 'binary_sensor.rv_presence' %}
+            input_select.rv_status_dropdown
+          {% else %}
+            input_select.rn_status_dropdown
+          {% endif %}
+        option: Just Left
+
+- alias: Mark person as away
+  trigger:
+    - platform: state
+      entity_id: input_select.rv_status_dropdown
+      to: 'Just Left'
+      for:
+        minutes: 10
+    - platform: state
+      entity_id: input_select.rn_status_dropdown
+      to: 'Just Left'
+      for:
+        minutes: 10
+  action:
+    - service: input_select.select_option
+      data_template:
+        entity_id: >
+          {% if trigger.entity_id == 'input_select.rv_status_dropdown' %}
+            input_select.rv_status_dropdown
+          {% else %}
+            input_select.rn_status_dropdown
+          {% endif %}
+        option: Away
+
+- alias: Mark person as extended away
+  trigger:
+    - platform: state
+      entity_id: input_select.rv_status_dropdown
+      to: 'Away'
+      for:
+        hours: 24
+    - platform: state
+      entity_id: input_select.rn_status_dropdown
+      to: 'Away'
+      for:
+        hours: 24
+  action:
+    - service: input_select.select_option
+      data_template:
+        entity_id: >
+          {% if trigger.entity_id == 'input_select.rv_status_dropdown' %}
+            input_select.rv_status_dropdown
+          {% else %}
+            input_select.rn_status_dropdown
+          {% endif %}
+        option: Extended Away
+
+- alias: Mark RV as away when home assistant starts
+  initial_state: 'on'
+  trigger:
+    - platform: homeassistant
+      event: start
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.rv_presence
+        state: 'off'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.rv_status_dropdown
+        option: Away
+
+- alias: Mark RN as away when home assistant starts
+  initial_state: 'on'
+  trigger:
+    - platform: homeassistant
+      event: start
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.rn_presence
+        state: 'off'
+  action:
+    - service: input_select.select_option
+      data:
+        entity_id: input_select.rn_status_dropdown
+        option: Away

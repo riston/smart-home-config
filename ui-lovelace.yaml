@@ -18,7 +18,14 @@
         - type: iframe
           aspect_ratio: 100%
           url: 'https://embed.windy.com/embed2.html?rain,59.3543993,26.3667541,8'
-          
+
+        - type: entities
+          show_header_toggle: false
+          title: People
+          entities:
+            - sensor.rv_status
+            - sensor.rn_status
+
         - type: entities
           title: All switches
           show_header_toggle: true
@@ -31,6 +38,8 @@
               name: Stairs light
             - entity: switch.sonoff_2
               name: Second floor light
+            - entity: switch.garage_light
+              name: Garage light
 
         - type: entities
           title: All automations

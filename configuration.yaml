@@ -76,21 +76,6 @@ map:
 # Track the sun
 sun:
 
-camera:
-  - platform: mjpeg
-    mjpeg_url: !secret home_camera_host
-
-device_tracker:
-  - platform: nmap_tracker
-    hosts:
-      # RV PC
-      - 192.168.1.199
-      # Tablet
-      - 192.168.1.109
-      # MB
-      - 192.168.1.177
-  - platform: bluetooth_tracker
-
 # Sensors
 sensor:
   # Weather prediction
