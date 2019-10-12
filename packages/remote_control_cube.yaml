@@ -1,0 +1,173 @@
+
+input_text:
+# Text Input to save the cube orientation
+  magic_cube_orientation:
+    name: 'Magic Cube Orientation'
+    initial: '1'
+
+automation:
+# Catch all events for Cube and set the value of 'magic_cube_orientation'
+# The first number of the event is the side that is at the top. 
+# By dividing the event id with a 1000 and converting to an int you can save it
+# Example: Change orientation from side 3 to side 4: 4003 / 1000 = 4.003 to int = 4
+# Example: Tap with side 5 facing up:  5005 / 1000 = 5.005 to int = 5
+- id: magic_cube_save_orientation
+  alias: 'Magic Cube Save Orientation'
+  initial_state: 'on'
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: magic_cube
+  action:
+    - service: input_text.set_value
+      entity_id: input_text.magic_cube_orientation
+      data_template: 
+        value: '{{ (trigger.event.data.event / 1000) | int }}'
+
+# Catch event 1000 (Move side 1) or 1001 (Tap side 1)
+# Toggle Light, Entity Id
+# Repeat for all the individual sides / change to event 2000 and 2001 for side 2
+- id: magic_cube_action_1
+  alias: 'Bedroom Cube Action 1'
+  initial_state: 'on'
+  trigger:
+    - platform: event
+      event_type: deconz_event
+      event_data:
+        id: magic_cube
+        event: 1000 
+    - platform: event
+      event_type: deconz_event
+      event_data:
+        id: magic_cube
+        event: 1001
+  action:
+    service: notify.livingroom_tv
+    data:
+      message: "Kes keeras kuubikut?"
+
+# Catch the event Id, note that the id of the device is different
+# Add conditions, to only work when the light is already on (To prevent is from going on by accident)
+# And check if the side that is on top is 1
+# Action: Take the current brightness and add the event value (degrees of rotation) / 100
+# Make sure the brightness cannot go lower than 1 or above 255
+- id: magic_cube_rotate_side1
+  alias: 'Magic Cube Rotate Side 1'
+  initial_state: 'on'
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: mi_magic_cube_rotate
+  condition:
+    - condition: state
+      entity_id: light.bedroom_light
+      state: 'on'
+    - condition: state
+      entity_id: input_text.magic_cube_orientation
+      state: '1'
+  action:
+    - service: light.turn_on
+      entity_id: light.bedroom_light
+      data_template:
+        brightness: "
+        {% set sign = 1 if ((trigger.event.data.event | int) > 0) else -1 %}
+        {% if is_state('light.bedroom_light', 'on') %}
+          {{ [[ states.light.bedroom_light.attributes.brightness + (sign * 5) | int, 1] | max, 255] | min }}
+        {% endif %}"  
+
+- id: magic_cube_rotate_side2
+  alias: 'Magic Cube Rotate Side 2'
+  initial_state: 'on'
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: mi_magic_cube_rotate
+  condition:
+    - condition: state
+      entity_id: light.outdoor_lights
+      state: 'on'
+    - condition: state
+      entity_id: input_text.magic_cube_orientation
+      state: '2'
+  action:
+    - service: light.turn_on
+      entity_id: light.outdoor_lights
+      data_template:
+        brightness: "
+        {% if is_state('light.outdoor_lights', 'on') %}
+          {{ [[ states.light.outdoor_lights.attributes.brightness + ((trigger.event.data.event | int) / 100 ) | int, 1] | max, 255] | min }}
+        {% endif %}"  
+
+# TV related automations
+- id: magic_cube_rotate_side3
+  alias: 'Magic Cube Rotate Side 3'
+  initial_state: 'on'
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: mi_magic_cube_rotate
+  condition:
+    - condition: state
+      entity_id: media_player.webos_tv
+      state: 'playing'
+    - condition: state
+      entity_id: input_text.magic_cube_orientation
+      state: '3'
+  action:
+    - service: media_player.volume_set
+      entity_id: media_player.webos_tv
+      data_template:
+        brightness: "
+        {% set sign = 1 if ((trigger.event.data.event | int) > 0) else -1 %}
+        {% if is_state('media_player.webos_tv', 'playing') %}
+          {{ [[ states.media_player.webos_tv.attributes.volume_level + (sign * 0.1) | float, 0] | max, 1] | min }}
+        {% endif %}"
+
+# Toggle TV off/on with cube slide
+- id: magic_cube_slide_side3
+  alias: 'Magic Cube Slide Side 3'
+  initial_state: 'on'
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: magic_cube
+      event: 3000
+  action:
+    - service: media_player.toggle
+      entity_id: media_player.webos_tv
+
+- id: magic_cube_tap
+  alias: 'Tap magic cube'
+  initial_state: 'on'
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: magic_cube
+      event: 6006
+  action:
+    - service: light.toggle
+      data:
+        entity_id: light.bedroom_light
+        brightness: 150  
+
+# Catch event 7007 (Shake) To turn off all devices/lights
+- id: magic_cube_shake
+  alias: 'Magic Cube Shake'
+  initial_state: 'on'
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: magic_cube
+      event: 7007
+  action:
+    service: notify.livingroom_tv
+    data:
+      message: "Raputa mind"
+      
