@@ -113,6 +113,7 @@ sensor:
     start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
     end: '{{ now() }}'
 
+  # Caused too many state changes disabled for a while
   - platform: history_stats
     name: TV On today
     entity_id: media_player.webos_tv
@@ -138,6 +139,17 @@ media_player:
       service: wake_on_lan.send_magic_packet
       data:
         mac: !secret livingroom_mac
+
+telegram_bot:
+  - platform: broadcast
+    api_key: !secret telegram_bot_api_key
+    allowed_chat_ids:
+      - !secret telegram_chat_id
+
+notify:
+  - name: home-assistant
+    platform: telegram
+    chat_id: !secret telegram_chat_id
 
 notify:
   - platform: webostv

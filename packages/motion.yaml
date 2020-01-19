@@ -57,10 +57,10 @@ automation:
   - id: '1546613456223'
     alias: Turn light when there is movement
     trigger:
-    - entity_id: sensor.moving_pir
-      from: '0'
+    - entity_id: binary_sensor.xiaomi_motion
+      from: 'off'
       platform: state
-      to: '1'
+      to: 'on'
     condition:
       condition: or
       conditions:
@@ -76,11 +76,10 @@ automation:
   - id: '1546615924808'
     alias: Turn light off after there is no movement
     trigger:
-    - entity_id: sensor.moving_pir
-      for:
-        minutes: 2
+    - entity_id: binary_sensor.xiaomi_motion
+      from: 'on'
       platform: state
-      to: '0'
+      to: 'off'
     condition: []
     action:
     - service: switch.turn_off

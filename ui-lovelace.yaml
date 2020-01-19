@@ -40,6 +40,8 @@
               name: Second floor light
             - entity: switch.garage_light
               name: Garage light
+            - entity: light.outdoor_lights
+              name: Outdoor lights
 
         - type: entities
           title: All automations

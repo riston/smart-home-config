@@ -1,0 +1,12 @@
+rest_command:
+  health_check_request:
+    url: !secret health_check_host
+    method: POST
+
+automation:
+  - alias: Ping health check site
+    trigger:
+      - minutes: /60
+        platform: time_pattern
+    action:
+      - service: rest_command.health_check_request

@@ -1,0 +1,26 @@
+
+group:
+  xlights:
+    name: X-mas lights
+    entities:
+      - switch.ikea_switch
+      - switch.blitzwolf_socket
+
+automation:
+  - id: remote-trigger-switches-on
+    alias: 'Toggle X-mas light sockets on'
+    trigger:
+      platform: sun
+      event: sunset
+    action:
+      service: switch.turn_on
+      entity_id: group.xlights
+
+  - id: remote-trigger-switches-off
+    alias: 'Toggle X-mas light sockets off'
+    trigger:
+      platform: time
+      at: "23:30:00"
+    action:
+      service: switch.turn_off
+      entity_id: group.xlights

@@ -121,7 +121,7 @@ automation:
     - service: media_player.volume_set
       entity_id: media_player.webos_tv
       data_template:
-        brightness: "
+        volume_level: "
         {% set sign = 1 if ((trigger.event.data.event | int) > 0) else -1 %}
         {% if is_state('media_player.webos_tv', 'playing') %}
           {{ [[ states.media_player.webos_tv.attributes.volume_level + (sign * 0.1) | float, 0] | max, 1] | min }}
@@ -137,9 +137,59 @@ automation:
     event_data:
       id: magic_cube
       event: 3000
+  condition:
+    - condition: state
+      entity_id: media_player.webos_tv
+      state: 'playing'
   action:
     - service: media_player.toggle
       entity_id: media_player.webos_tv
+
+- id: magic_cube_slide_side_on4
+  alias: 'Magic Cube Slide Side On 4'
+  initial_state: 'on'
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: magic_cube
+      event: 4000
+  condition:
+    condition: or
+    conditions:
+      - condition: state
+        entity_id: media_player.mpd
+        state: idle
+      - condition: state
+        entity_id: media_player.mpd
+        state: 'off'
+      - condition: state
+        entity_id: media_player.mpd
+        state: 'paused'
+  action:
+    - service: media_player.play_media
+      entity_id: media_player.mpd
+      data:
+        entity_id: media_player.mpd
+        media_content_type: music
+        media_content_id: 'http://striiming.trio.ee/elmar_high.mp3.m3u'
+
+- id: magic_cube_slide_side_off4
+  alias: 'Magic Cube Slide Side Off 4'
+  initial_state: 'on'
+  trigger:
+    platform: event
+    event_type: deconz_event
+    event_data:
+      id: magic_cube
+      event: 4000
+  condition:
+    - condition: state
+      entity_id: media_player.mpd
+      state: playing
+  action:
+    - service: media_player.media_pause
+      entity_id: media_player.mpd
 
 - id: magic_cube_tap
   alias: 'Tap magic cube'
@@ -154,7 +204,7 @@ automation:
     - service: light.toggle
       data:
         entity_id: light.bedroom_light
-        brightness: 150  
+        brightness: 150
 
 # Catch event 7007 (Shake) To turn off all devices/lights
 - id: magic_cube_shake
