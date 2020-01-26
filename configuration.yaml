@@ -73,6 +73,9 @@ map:
 # Track the sun
 sun:
 
+# Python scripts
+python_script:
+
 # Sensors
 sensor:
   # Weather prediction
@@ -132,13 +135,14 @@ media_player:
   - platform: mpd
     host: !secret media_player_host
 
-  - platform: webostv
-    name: webOS TV
-    host: !secret livingroom_tv_host
-    turn_on_action:
-      service: wake_on_lan.send_magic_packet
-      data:
-        mac: !secret livingroom_mac
+webostv:
+  name: webOS TV
+  host: !secret livingroom_tv_host
+  standby_connection: true
+  turn_on_action:
+    service: wake_on_lan.send_magic_packet
+    data:
+      mac: !secret livingroom_mac
 
 telegram_bot:
   - platform: broadcast
@@ -150,12 +154,6 @@ notify:
   - name: home-assistant
     platform: telegram
     chat_id: !secret telegram_chat_id
-
-notify:
-  - platform: webostv
-    host: !secret livingroom_tv_host
-    name: livingroom_tv
-    filename: webostv.conf
 
   - name: email
     platform: smtp

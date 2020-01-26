@@ -146,20 +146,22 @@
           title: Door switches
           show_header_toggle: false
           entities:
-            - binary_sensor.door
-            - binary_sensor.hall_door
-            - binary_sensor.fridge
+            - binary_sensor.door_sensor
+            - binary_sensor.hall_door_sensor
+            - binary_sensor.fridge_sensor
 
         - type: glance
           title: Motion & other
           show_header_toggle: false
           entities:
-            - entity: binary_sensor.motion_kitchen
+            - entity: binary_sensor.kitchen_motion
               name: Kitchen
-            - entity: binary_sensor.digoo_motion
+            - entity: binary_sensor.staircase_motion
               name: Staircase
-            - entity: sensor.moving_pir
+            - entity: binary_sensor.xiaomi_motion
               name: Second floor 
+            - entity: binary_sensor.tradfri_motion_sensor
+              name: Second floor last room
             - binary_sensor.water_leak
 
         - type: glance

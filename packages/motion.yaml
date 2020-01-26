@@ -8,27 +8,23 @@ sensor:
 
 binary_sensor:
   - platform: mqtt
-    name: "Digoo Motion"
+    name: 'Staircase Motion'
+    state_topic: 'home/staircase-motion'
     device_class: motion
-    state_topic: "sonoff-bridge/tele/RESULT"
-    value_template: "{{value_json.RfReceived.Data}}"
-    payload_on: "E28186"
     off_delay: 10
     qos: 1
 
   - platform: mqtt
-    name: "Motion Kitchen"
+    name: 'Kitchen Motion'
+    state_topic: 'home/kitchen-motion'
     device_class: motion
-    state_topic: "sonoff-bridge/tele/RESULT"
-    value_template: "{{value_json.RfReceived.Data}}"
-    payload_on: "037526"
-    off_delay: 120
+    off_delay: 200
     qos: 1
 
 automation:
   - alias: Turn kitchen light on movement
     trigger:
-    - entity_id: binary_sensor.motion_kitchen
+    - entity_id: binary_sensor.kitchen_motion
       platform: state
       from: 'off'
       to: 'on'
@@ -46,7 +42,7 @@ automation:
 
   - alias: Turn kitchen light off when no movement
     trigger:
-    - entity_id: binary_sensor.motion_kitchen
+    - entity_id: binary_sensor.kitchen_motion
       platform: state
       from: 'on'
       to: 'off'
@@ -88,7 +84,7 @@ automation:
   - id: '1546613458556'
     alias: 'Turn socket off on movement'
     trigger:
-    - entity_id: binary_sensor.digoo_motion
+    - entity_id: binary_sensor.staircase_motion
       for:
         seconds: 15
       platform: state
@@ -101,7 +97,7 @@ automation:
   - id: '1546613458555'
     alias: Turn socket on movement
     trigger:
-    - entity_id: binary_sensor.digoo_motion
+    - entity_id: binary_sensor.staircase_motion
       from: 'off'
       platform: state
       to: 'on'

@@ -6,40 +6,28 @@ binary_sensor:
     # C - 9EEF31
     # D - 2E1A21
   - platform: mqtt
-    state_topic: "sonoff-bridge/tele/RESULT"
+    state_topic: "home/remote-control-a"
     name: 'Remote Control A'
-    value_template: '{{value_json.RfReceived.Data}}'
-    payload_on: '2E1A22'
     device_class: opening
     off_delay: 1
-    qos: 1
 
   - platform: mqtt
-    state_topic: "sonoff-bridge/tele/RESULT"
+    state_topic: "home/remote-control-b"
     name: 'Remote Control B'
-    value_template: '{{value_json.RfReceived.Data}}'
-    payload_on: '2E1A41'
     device_class: opening
     off_delay: 1
-    qos: 1
 
   - platform: mqtt
-    state_topic: "sonoff-bridge/tele/RESULT"
+    state_topic: "home/remote-control-c"
     name: 'Remote Control C'
-    value_template: '{{value_json.RfReceived.Data}}'
-    payload_on: '9EEF31'
     device_class: opening
     off_delay: 1
-    qos: 1
 
   - platform: mqtt
-    state_topic: "sonoff-bridge/tele/RESULT"
+    state_topic: "home/remote-control-d"
     name: 'Remote Control D'
-    value_template: '{{value_json.RfReceived.Data}}'
-    payload_on: '2E1A21'
     device_class: opening
     off_delay: 1
-    qos: 1
 
 automation:
   - id: remote-trigger-a-socket
@@ -69,7 +57,7 @@ automation:
       platform: state
       to: 'on'
     action:
-      service: notify.livingroom_tv
+      service: notify.webos_tv
       data:
         message: "Õues {{ states.sensor.yr_temperature.state }}°C - {{ states.sensor.yr_humidity.state }}%,  all korrusel {{ states('sensor.temperature_living_room') }} °C - {{ states('sensor.humidity_living_room') }}%"
         

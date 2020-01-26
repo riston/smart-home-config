@@ -1,56 +1,38 @@
 
 binary_sensor:
   - platform: mqtt
-    name: "Fridge"
-    state_topic: "sonoff-bridge/tele/RESULT"
-    value_template: '{{value_json.RfReceived.Data}}'
-    device_class: "door"
-    payload_on: "2CBF0A"
-    payload_off: "2CBF0E"
-    qos: 1
+    name: 'Fridge Sensor'
+    state_topic: 'home/fride-door'
+    device_class: Door
 
   - platform: mqtt
-    name: "Fridge door battery"
-    device_class: "battery"
-    state_topic: "sonoff-bridge/tele/RESULT"
-    value_template: '{{value_json.RfReceived.Data}}'
-    payload_on: "2CBF06"
+    name: 'Fridge door battery'
+    device_class: 'battery'
+    state_topic: 'home/fridge-door-battery'
     off_delay: 60
     qos: 1
 
   - platform: mqtt
-    name: "Hall door"
-    device_class: "door"
-    state_topic: "sonoff-bridge/tele/RESULT"
-    value_template: '{{value_json.RfReceived.Data}}'
-    payload_on: "2E970A"
-    payload_off: "2E970E"
-    qos: 1
+    name: 'Hall Door Sensor'
+    state_topic: 'home/hall-door'
+    device_class: Door
 
   - platform: mqtt
-    name: "Hall door battery"
-    device_class: "battery"
-    state_topic: "sonoff-bridge/tele/RESULT"
-    value_template: '{{value_json.RfReceived.Data}}'
-    payload_on: "2E9706"
+    name: 'Hall door battery'
+    device_class: 'battery'
+    state_topic: 'home/hall-door-battery'
     off_delay: 60
     qos: 1
 
   - platform: mqtt
-    name: "Door"
-    device_class: "door"
-    state_topic: "sonoff-bridge/tele/RESULT"
-    value_template: '{{value_json.RfReceived.Data}}'
-    payload_on: "2F420A"
-    payload_off: "2F420E"
-    qos: 1
+    name: 'Door Sensor'
+    state_topic: 'home/door'
+    device_class: Door
 
   - platform: mqtt
-    name: "Door battery"
-    device_class: "battery"
-    state_topic: "sonoff-bridge/tele/RESULT"
-    value_template: '{{value_json.RfReceived.Data}}'
-    payload_on: "2F4206"
+    name: 'Door battery'
+    device_class: 'battery'
+    state_topic: 'home/door-battery'
     off_delay: 60
     qos: 1
 
@@ -64,9 +46,9 @@ automation:
       to: 'on'
       platform: state
     action:
-    - service: notify.livingroom_tv
+    - service: notify.webostv
       data:
-        message: "Patarei on tühi"
+        message: 'Patarei on tühi'
     - service: notify.email
       data:
           title: 'Patarei on tühi'
@@ -74,7 +56,7 @@ automation:
 
   - alias: Play sound when fridge is open
     trigger:
-    - entity_id: binary_sensor.fridge
+    - entity_id: binary_sensor.fridge_sensor
       from: 'off'
       to: 'on'
       platform: state

@@ -217,7 +217,7 @@ automation:
       id: magic_cube
       event: 7007
   action:
-    service: notify.livingroom_tv
+    service: notify.webos_tv
     data:
       message: "Raputa mind"
       

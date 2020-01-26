@@ -3,9 +3,7 @@ binary_sensor:
   - platform: mqtt
     name: "Water Leak"
     device_class: "moisture"
-    state_topic: "sonoff-bridge/tele/RESULT"
-    value_template: '{{value_json.RfReceived.Data}}'
-    payload_on: "D83212"
+    state_topic: "home/water-leak"
     payload_off: "D83212Off"
     qos: 1
 
@@ -17,7 +15,7 @@ automation:
       to: 'on'
       platform: state
     action:
-    - service: notify.livingroom_tv
+    - service: notify.webostv
       data:
         message: "Vee leke !!!"
     - service: notify.email
@@ -36,5 +34,5 @@ automation:
     action:
     - service: mqtt.publish
       data:
-        topic: sonoff-bridge/tele/RESULT
+        topic: home/water-leak
         payload: D83212Off

@@ -36,7 +36,7 @@
     event: sunrise
     offset: '-01:00:00'
   action:
-    service: notify.livingroom_tv
+    service: notify.webos_tv
     data:
       message: 'Päike tõuseb tunni aja pärast.'
 
@@ -47,6 +47,17 @@
     event: sunset
     offset: '-01:00:00'
   action:
-    service: notify.livingroom_tv
+    service: notify.webos_tv
     data:
       message: 'Päike loojub tunni aja pärast.'
+
+- id: rfbridge_demultiplexer
+  alias: 'rfbridge_demultiplexer'
+  initial_state: 'true'
+  trigger:
+  - platform: mqtt
+    topic: sonoff-bridge/tele/RESULT
+  action:
+  - service: python_script.rfbridge_demux
+    data_template:
+      payload: '{{trigger.payload_json.RfReceived.Data}}'
