@@ -27,8 +27,10 @@ system_health:
 config:
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
-# http:
-#   base_url: example.duckdns.org:8123
+http:
+  base_url: !secret home_assistant_base_url
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem
 
 # Checks for available updates
 # Note: This component will send some information about your system to
@@ -45,10 +47,13 @@ discovery:
 # Allows you to issue voice commands from the frontend in enabled browsers
 conversation:
 
-panel_iframe:  
-  music:  
-    title: 'Pi Music'  
-    icon: 'mdi:music-box-outline'  
+alexa:
+  smart_home:
+
+panel_iframe:
+  music:
+    title: 'Pi Music'
+    icon: 'mdi:music-box-outline'
     url: !secret media_player_host_url
 
 mqtt:
@@ -62,7 +67,7 @@ history:
 
 recorder:
   purge_keep_days: 3
-  purge_interval: 2
+  auto_purge: true
 
 # View all events in a logbook
 logbook:
@@ -138,7 +143,6 @@ media_player:
 webostv:
   name: webOS TV
   host: !secret livingroom_tv_host
-  standby_connection: true
   turn_on_action:
     service: wake_on_lan.send_magic_packet
     data:

@@ -4,7 +4,7 @@
 
   title: Home
   resources:
-    - url: /local/mini-graph-card-bundle.js?v=0.3.3
+    - url: /local/community/mini-graph-card/mini-graph-card-bundle.js
       type: module
   views:
     - title: Home
@@ -103,7 +103,7 @@
             cards: 
             - type: custom:mini-graph-card
               entities:
-                - sensor.temperature_first
+                - sensor.xiaomi_lywsd02_temperature
               name: Temperature
               line_color: '#e74c3c'
               line_width: 8
@@ -111,7 +111,7 @@
             
             - type: custom:mini-graph-card
               entities:
-                - sensor.humidity_first
+                - sensor.xiaomi_lywsd02_humidity
               name: Humidity
               icon: mdi:cloud
               line_width: 8
@@ -186,7 +186,7 @@
             - sensor.hall_door_open_today
             - sensor.main_door_open_today
             - sensor.tv_on_today
-            - sensor.pow_energy_today
+            # - sensor.pow_energy_today
             - sensor.blitzwolf_socket_energy_today
 
         - type: custom:mini-graph-card
@@ -197,10 +197,10 @@
           show:
             graph: bar
 
-        - type: custom:mini-graph-card
-          entities:
-            - entity: sensor.pow_energy_power
-          name: MONITOR ENERGY
-          icon: mdi:chart-line
-          show:
-            graph: bar
+        # - type: custom:mini-graph-card
+        #   entities:
+        #     - entity: sensor.pow_energy_power
+        #   name: MONITOR ENERGY
+        #   icon: mdi:chart-line
+        #   show:
+        #     graph: bar
