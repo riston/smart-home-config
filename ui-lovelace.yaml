@@ -119,29 +119,33 @@
               
           - type: markdown
             content: >
-              ## Last room - second floor
+              ## Second floor
           - type: horizontal-stack
             cards: 
             - type: custom:mini-graph-card
               entities:
-                - sensor.temperature_second
+                - sensor.water_leak_temperature
+                - sensor.xiaomi_motion_temperature
               name: Temperature
               line_color: '#e74c3c'
               line_width: 8
               font_size: 75
-            
-            - type: custom:mini-graph-card
-              entities:
-                - sensor.humidity_second
-              name: Humidity
-              icon: mdi:cloud
-              line_width: 8
-              font_size: 75
+
+            # - type: custom:mini-graph-card
+            #   entities:
+            #     - sensor.humidity_second
+            #   name: Humidity
+            #   icon: mdi:cloud
+            #   line_width: 8
+            #   font_size: 75
               
 
         - type: media-control
           entity: media_player.webos_tv
           
+        - type: media-control
+          entity: media_player.risto_s_echo_dot
+
         - type: glance
           title: Door switches
           show_header_toggle: false

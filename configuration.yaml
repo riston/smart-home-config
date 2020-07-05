@@ -68,6 +68,14 @@ history:
 recorder:
   purge_keep_days: 3
   auto_purge: true
+  exclude:
+    entities:
+      # Exclude Tasmota status from history
+      - sensor.sonoff_bridge_status
+      - sensor.sonoff_status_4
+      - sensor.sonoff_status_3
+      - sensor.sonoff_status_2
+      - sensor.blitzwolf_socket_status
 
 # View all events in a logbook
 logbook:
