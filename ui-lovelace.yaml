@@ -43,106 +43,41 @@
             - entity: light.outdoor_lights
               name: Outdoor lights
 
-        - type: entities
-          title: All automations
-          show_header_toggle: true
-          entities:
-            - automation.enable_mqtt_discovery_for_all_devices
-            - automation.turn_light_off_after_there_is_no_movement
-            - automation.turn_light_when_there_is_movement
-
         - type: vertical-stack
-          cards: 
-          - type: markdown
-            content: >
-              ## Outside
-          - type: horizontal-stack
-            cards: 
-            - type: custom:mini-graph-card
-              entities:
-                - sensor.yr_temperature
-              name: Temperature
-              line_color: '#e74c3c'
-              line_width: 8
-              font_size: 75
-            
-            - type: custom:mini-graph-card
-              entities:
-                - sensor.yr_humidity
-              name: Humidity
-              icon: mdi:cloud
-              line_width: 8
-              font_size: 75
+          cards:
+          - type: custom:mini-graph-card
+            entities:
+              - entity: sensor.yr_temperature
+                name: Outside
+              - entity: sensor.temperature_living_room
+                name: Living room
+              - entity: sensor.xiaomi_lywsd02_temperature
+                name: Bathroom
+              - entity: sensor.water_leak_temperature
+                name: Office
+              - entity: sensor.xiaomi_motion_temperature
+                name: Second floor
+            name: Temperature
+            line_color: '#e74c3c'
+            line_width: 4
+            font_size: 75
 
-          - type: markdown
-            content: >
-              ## Living Room
-
-          - type: horizontal-stack
-            cards: 
-            - type: custom:mini-graph-card
-              entities:
-                - sensor.temperature_living_room
-              name: Temperature
-              line_color: '#e74c3c'
-              line_width: 8
-              font_size: 75
-            
-            - type: custom:mini-graph-card
-              entities:
-                - sensor.humidity_living_room
-              name: Humidity
-              icon: mdi:cloud
-              line_width: 8
-              font_size: 75
-              
-          - type: markdown
-            content: >
-              ## Center - second floor
-          - type: horizontal-stack
-            cards: 
-            - type: custom:mini-graph-card
-              entities:
-                - sensor.xiaomi_lywsd02_temperature
-              name: Temperature
-              line_color: '#e74c3c'
-              line_width: 8
-              font_size: 75
-            
-            - type: custom:mini-graph-card
-              entities:
-                - sensor.xiaomi_lywsd02_humidity
-              name: Humidity
-              icon: mdi:cloud
-              line_width: 8
-              font_size: 75
-              
-          - type: markdown
-            content: >
-              ## Second floor
-          - type: horizontal-stack
-            cards: 
-            - type: custom:mini-graph-card
-              entities:
-                - sensor.water_leak_temperature
-                - sensor.xiaomi_motion_temperature
-              name: Temperature
-              line_color: '#e74c3c'
-              line_width: 8
-              font_size: 75
-
-            # - type: custom:mini-graph-card
-            #   entities:
-            #     - sensor.humidity_second
-            #   name: Humidity
-            #   icon: mdi:cloud
-            #   line_width: 8
-            #   font_size: 75
-              
+          - type: custom:mini-graph-card
+            entities:
+              - entity: sensor.yr_humidity
+                name: Outside
+              - entity: sensor.humidity_living_room
+                name: Living room
+              - entity: sensor.xiaomi_lywsd02_humidity
+                name: Bathroom
+            name: Humidity
+            icon: mdi:cloud
+            line_width: 4
+            font_size: 75
 
         - type: media-control
           entity: media_player.webos_tv
-          
+
         - type: media-control
           entity: media_player.risto_s_echo_dot
 
@@ -152,7 +87,7 @@
           entities:
             - binary_sensor.door_sensor
             - binary_sensor.hall_door_sensor
-            - binary_sensor.fridge_sensor
+            # - binary_sensor.fridge_sensor
 
         - type: glance
           title: Motion & other
@@ -163,7 +98,7 @@
             - entity: binary_sensor.staircase_motion
               name: Staircase
             - entity: binary_sensor.xiaomi_motion
-              name: Second floor 
+              name: Second floor
             - entity: binary_sensor.tradfri_motion_sensor
               name: Second floor last room
             - binary_sensor.water_leak
@@ -186,7 +121,7 @@
           title: Counters
           show_header_toggle: false
           entities:
-            - sensor.fridge_open_today
+            # - sensor.fridge_open_today
             - sensor.hall_door_open_today
             - sensor.main_door_open_today
             - sensor.tv_on_today
@@ -196,7 +131,7 @@
         - type: custom:mini-graph-card
           entities:
             - entity: sensor.blitzwolf_socket_energy_power
-          name: PC ENERGY
+          name: PC energy usage
           icon: mdi:chart-line
           show:
             graph: bar

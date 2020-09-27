@@ -20,7 +20,15 @@ frontend:
 
 lovelace:
   mode: yaml
-
+  dashboards:
+    other-lovelace:
+      mode: yaml
+      filename: other-lovelace.yaml
+      title: Other
+      icon: mdi:tools
+      show_in_sidebar: true
+      require_admin: true
+      
 system_health:
 
 # Enables configuration UI
@@ -99,41 +107,10 @@ sensor:
      - humidity
      - cloudiness
 
-  - platform: template
-    sensors:
-      monitor_status:
-        value_template: '{{ states.input_select.monitor_status.state}}'
-        friendly_name: 'Monitor Status'
-
-  - platform: history_stats
-    name: Fridge Open Today
-    entity_id: binary_sensor.fridge
-    state: 'on'
-    type: count
-    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
-    end: '{{ now() }}'
-
-  - platform: history_stats
-    name: Hall Door Open Today
-    entity_id: binary_sensor.hall_door
-    state: 'on'
-    type: count
-    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
-    end: '{{ now() }}'
-
-  - platform: history_stats
-    name: Main Door Open Today
-    entity_id: binary_sensor.door
-    state: 'on'
-    type: count
-    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
-    end: '{{ now() }}'
-
-  # Caused too many state changes disabled for a while
   - platform: history_stats
     name: TV On today
     entity_id: media_player.webos_tv
-    state: 'playing'
+    state: 'on'
     type: time
     start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
     end: '{{ now() }}'
@@ -166,20 +143,6 @@ notify:
   - name: home-assistant
     platform: telegram
     chat_id: !secret telegram_chat_id
-
-  - name: email
-    platform: smtp
-    server: smtp.gmail.com
-    port: 587
-    timeout: 15
-    sender: !secret email_sender
-    encryption: starttls
-    username: !secret email_username
-    password: !secret email_password
-    recipient:
-      - !secret email_recipient_first
-      - !secret email_recipient_second
-    sender_name: Tark Kodu
 
 # Text to speech
 tts:

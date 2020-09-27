@@ -18,10 +18,10 @@ automation:
     - service: notify.webostv
       data:
         message: "Vee leke !!!"
-    - service: notify.email
+    - service: persistent_notification.create
       data:
-          title: 'Vesi lekib'
-          message: 'Vesi lekib, kontrolli!'
+        title: 'Vesi lekib'
+        message: 'Vesi lekib, kontrolli!'
 
   - alias: Turn water leak off
     trigger:

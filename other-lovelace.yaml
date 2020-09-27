@@ -1,0 +1,46 @@
+title: Other dashboard
+views:
+  - title: Presence
+    cards:
+        # The markdown card will render markdown text.
+      - type: markdown
+        title: Presence
+        content: >
+          Debugging people device presence.
+
+      - entities:
+          - sensor.rv_status
+          - sensor.rn_status
+        show_header_toggle: false
+        title: People Status
+        type: entities
+      
+      - entities:
+          - binary_sensor.xiaomi_amazfit_bip_presence
+          - binary_sensor.xiaomi_amazfit_bip_presence_2
+          - device_tracker.mi_phone
+          - binary_sensor.nut_tag_presence
+          - binary_sensor.nut_tag_presence_2
+        title: Risto Status
+        type: entities
+
+      - entities:
+          - binary_sensor.amazfit_gtr_presence
+          - binary_sensor.amazfit_gtr_presence_2
+          - device_tracker.redmi
+          - device_tracker.redmi_2
+          - device_tracker.plt_m70
+        title: Rita Status
+        type: entities
+
+      - entities:
+          - sensor.amazfit_gtr
+          - sensor.amazfit_gtr_2
+        title: Rita Sensor Status
+        type: entities
+
+      - entities:
+          - sensor.nut_tag
+          - sensor.nut_tag_2
+        title: Risto Sensor Status
+        type: entities

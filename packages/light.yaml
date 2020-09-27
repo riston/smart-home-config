@@ -1,0 +1,44 @@
+group:
+  lights:
+    name: All lights
+    entities:
+      - light.sonoff
+      - light.bedroom_light
+      - light.light_1
+      - light.light_2
+      - light.light_3
+      - switch.sonoff
+      - switch.sonoff_2
+      - switch.garage_light
+
+sensor:
+  - platform: template
+    sensors:
+      lights_turned_on_for_two_hours:
+        icon_template: mdi:thumb-up
+        value_template: >
+          {% set nowTime = now() %}
+          {% set lights_on = expand('group.lights') | selectattr('state', 'eq', 'on') %}
+          {% set lights_count = 0 %}
+          {% for light in lights_on if as_timestamp(nowTime) - as_timestamp(light.last_changed) > (10 * 60) -%}
+            {% set lights_count = lights_count + 1 %}
+          {%- endfor %}
+          {{ lights_count }}
+        attribute_templates:
+          light_entities: >
+            {% set nowTime = now() %}
+            {% set lights_on = expand('group.lights') | selectattr('state', 'eq', 'on') %}
+            {% for light in lights_on if as_timestamp(nowTime) - as_timestamp(light.last_changed) > (10 * 60) -%}
+              {{ light.entity_id }}{%- if loop.last %} {% else %}, {% endif -%}
+            {%- endfor %}
+
+automation:
+  - id: sensor_lights_turned_on_four_two_hours_update
+    alias: "Update the lights turned on"
+    trigger:
+      - platform: time_pattern
+        minutes: '/5'
+    action:
+      - service: homeassistant.update_entity
+        data:
+          entity_id: sensor.lights_turned_on_for_two_hours

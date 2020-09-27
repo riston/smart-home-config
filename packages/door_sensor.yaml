@@ -2,7 +2,7 @@
 binary_sensor:
   - platform: mqtt
     name: 'Fridge Sensor'
-    state_topic: 'home/fride-door'
+    state_topic: 'home/fridge-door'
     device_class: Door
 
   - platform: mqtt
@@ -36,6 +36,23 @@ binary_sensor:
     off_delay: 60
     qos: 1
 
+sensor:
+  - platform: history_stats
+    name: Hall Door Open Today
+    entity_id: binary_sensor.hall_door_sensor
+    state: 'on'
+    type: count
+    start: '{{ now().replace(hour=0, minute=0, second=0) }}'
+    end: '{{ now() }}'
+
+  - platform: history_stats
+    name: Main Door Open Today
+    entity_id: binary_sensor.door_sensor
+    state: 'on'
+    type: count
+    start: '{{ now().replace(hour=0, minute=0, second=0) }}'
+    end: '{{ now() }}'
+
 automation:
   - alias: Turn low battery message notify
     trigger:
@@ -49,7 +66,7 @@ automation:
     - service: notify.webostv
       data:
         message: 'Patarei on tühi'
-    - service: notify.email
+    - service: persistent_notification.create
       data:
           title: 'Patarei on tühi'
           message: 'patarei saab tühjaks, kontrolli'
