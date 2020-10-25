@@ -34,14 +34,14 @@
               name: Kitchen light
             - entity: light.sonoff
               name: TV light
-            - entity: switch.sonoff
+            - entity: light.sonoff_stairs_light
               name: Stairs light
-            - entity: switch.sonoff_2
+            - entity: light.sonoff_second_floor_light
               name: Second floor light
-            - entity: switch.garage_light
-              name: Garage light
             - entity: light.outdoor_lights
               name: Outdoor lights
+            - entity: switch.garage_light
+              name: Garage light
 
         - type: vertical-stack
           cards:

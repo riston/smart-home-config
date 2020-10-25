@@ -1,3 +1,9 @@
+group:
+  door_window_sensors:
+    name: All door/window sensors
+    entities:
+      - binary_sensor.door_sensor
+      - binary_sensor.hall_door_sensor
 
 binary_sensor:
   - platform: mqtt
@@ -53,11 +59,22 @@ sensor:
     start: '{{ now().replace(hour=0, minute=0, second=0) }}'
     end: '{{ now() }}'
 
+  - platform: template
+    sensors:
+      open_door_window_sensor:
+        icon_template: mdi:thumb-up
+        value_template: >
+          {% set nowTime = now() %}
+          {% set sensors_on = expand('group.door_window_sensors') | selectattr('state', 'eq', 'on') %}
+          {% for sensor in sensors_on if as_timestamp(nowTime) - as_timestamp(sensor.last_changed) > (10 * 60) -%}
+            {{ sensor.name }}{%- if loop.last %} {% else %}, {% endif -%}
+          {%- endfor %}
+
 automation:
   - alias: Turn low battery message notify
     trigger:
-    - entity_id: binary_sensor.door_battery, 
-        binary_sensor.fridge_door_battery, 
+    - entity_id: binary_sensor.door_battery,
+        binary_sensor.fridge_door_battery,
         binary_sensor.hall_door_battery
       from: 'off'
       to: 'on'
@@ -71,25 +88,12 @@ automation:
           title: 'Patarei on tühi'
           message: 'patarei saab tühjaks, kontrolli'
 
-  - alias: Play sound when fridge is open
+  - id: sensor_door_window_update
+    alias: "Update the door/window sensors"
     trigger:
-    - entity_id: binary_sensor.fridge_sensor
-      from: 'off'
-      to: 'on'
-      platform: state
-    condition:
-      condition: and
-      conditions:
-      - condition: sun
-        before: sunset
-      - condition: sun
-        after: sunrise
+      - platform: time_pattern
+        minutes: '/5'
     action:
-    - service: media_player.play_media
-      data:
-        entity_id: media_player.mpd
-        media_content_type: 'music'
-      data_template:
-        # TODO: Remove hardcoded host url
-        media_content_id: > 
-          http://192.168.1.228:8123/local/fridge-{{range(0,6) | random}}.mp3
+      - service: homeassistant.update_entity
+        data:
+          entity_id: sensor.open_door_window_sensor

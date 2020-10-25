@@ -48,7 +48,7 @@ automation:
       to: 'on'
     action:
     - service: switch.toggle
-      entity_id: switch.sonoff
+      entity_id: light.sonoff_stairs_light
       
   - id: remote-trigger-c-socket
     alias: 'Show temperature in TV'
