@@ -15,7 +15,7 @@ automation:
       to: 'on'
       platform: state
     action:
-    - service: notify.webostv
+    - service: notify.webos_tv
       data:
         message: "Vee leke !!!"
     - service: persistent_notification.create

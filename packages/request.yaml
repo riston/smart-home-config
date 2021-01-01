@@ -6,7 +6,7 @@ rest_command:
 automation:
   - alias: Ping health check site
     trigger:
-      - minutes: /60
+      - minutes: /59
         platform: time_pattern
     action:
       - service: rest_command.health_check_request

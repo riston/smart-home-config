@@ -1,0 +1,43 @@
+
+automation:
+  - id: play-random-song-on-motion
+    alias: Play random song on motion
+    trigger:
+    - entity_id: binary_sensor.kitchen_motion
+      from: 'off'
+      platform: state
+      to: 'on'
+
+    condition:
+      - condition: state
+        entity_id: input_text.magic_cube_orientation
+        state: '2'
+
+    action:
+      - service: media_player.shuffle_set
+        data:
+          entity_id: media_player.mpd
+          shuffle: true
+
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.mpd
+          media_content_type: playlist
+          media_content_id: Christmas
+
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.mpd
+          volume_level: 0.55
+
+  - id: stop-player-after-no-motion
+    alias: Stop media player after no motion
+    trigger:
+      platform: state
+      entity_id: binary_sensor.kitchen_motion
+      to: 'off'
+      for:
+        minutes: 1
+    action:
+      service: media_player.media_stop
+      entity_id: media_player.mpd

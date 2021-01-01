@@ -1,3 +1,12 @@
+input_number:
+  door_open_time:
+    name: Door open notification period slider
+    min: 1
+    max: 180
+    step: 5
+    unit_of_measurement: minute
+    icon: mdi:target
+
 group:
   door_window_sensors:
     name: All door/window sensors
@@ -64,9 +73,20 @@ sensor:
       open_door_window_sensor:
         icon_template: mdi:thumb-up
         value_template: >
+          {% set now_time = now() %}
+          {% set doors_open = expand('group.door_window_sensors') | selectattr('state', 'eq', 'on') %}
+          {% set count = namespace(value=0) %}
+          {% set base_value = states('input_number.door_open_time') | int * 60 %}
+          {% for door in doors_open if as_timestamp(now_time) - as_timestamp(door.last_changed) > (base_value) -%}
+            {% set count.value = count.value + 1 %}
+          {%- endfor %}
+          {{ count.value }}
+        attribute_templates:
+         door_entities: >
           {% set nowTime = now() %}
           {% set sensors_on = expand('group.door_window_sensors') | selectattr('state', 'eq', 'on') %}
-          {% for sensor in sensors_on if as_timestamp(nowTime) - as_timestamp(sensor.last_changed) > (10 * 60) -%}
+          {% set base_value = states('input_number.door_open_time') | int * 60 %}
+          {% for sensor in sensors_on if as_timestamp(nowTime) - as_timestamp(sensor.last_changed) > (base_value) -%}
             {{ sensor.name }}{%- if loop.last %} {% else %}, {% endif -%}
           {%- endfor %}
 
@@ -80,7 +100,7 @@ automation:
       to: 'on'
       platform: state
     action:
-    - service: notify.webostv
+    - service: notify.webos_tv
       data:
         message: 'Patarei on tühi'
     - service: persistent_notification.create
@@ -97,3 +117,13 @@ automation:
       - service: homeassistant.update_entity
         data:
           entity_id: sensor.open_door_window_sensor
+
+  - id: notify_door_open
+    alias: "Notify if door is left open"
+    trigger:
+      - platform: state
+        entity_id: sensor.open_door_window_sensor
+    action:
+      - service: notify.webos_tv
+        data_template: 
+          message: "{{ state_attr('sensor.open_door_window_sensor', 'door_entities') | join(',') }} has open for {{ states('input_number.door_open_time') | int }} minutes"

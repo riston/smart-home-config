@@ -53,3 +53,21 @@ automation:
         data_template: 
           entity_id: >
             {{ state_attr('sensor.lights_turned_on_for_two_hours', 'light_entities') }} 
+
+  - id: remote_trigger_pavilion_lights_on
+    alias: 'Turn on pavilion lights'
+    trigger:
+      platform: sun
+      event: sunset
+    action:
+      service: light.turn_on
+      entity_id: light.pavilion
+
+  - id: remote_trigger_pavilion_lights_off
+    alias: 'Turn pavilion lights off'
+    trigger:
+      platform: time
+      at: "23:30:00"
+    action:
+      service: light.turn_off
+      entity_id: light.pavilion

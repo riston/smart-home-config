@@ -28,7 +28,7 @@ lovelace:
       icon: mdi:tools
       show_in_sidebar: true
       require_admin: true
-      
+
 system_health:
 
 # Enables configuration UI
@@ -48,6 +48,9 @@ http:
 updater:
   # Optional, allows Home Assistant developers to focus on popular components.
   # include_used_components: true
+
+# Android/iOS companion app
+mobile_app:
 
 # Discover some devices automatically
 discovery:
@@ -99,14 +102,6 @@ python_script:
 
 # Sensors
 sensor:
-  # Weather prediction
-  - platform: yr
-    monitored_conditions:
-     - temperature
-     - symbol
-     - humidity
-     - cloudiness
-
   - platform: history_stats
     name: TV On today
     entity_id: media_player.webos_tv

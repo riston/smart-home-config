@@ -18,7 +18,7 @@ binary_sensor:
     name: 'Kitchen Motion'
     state_topic: 'home/kitchen-motion'
     device_class: motion
-    off_delay: 200
+    off_delay: 60
     qos: 1
 
 automation:
