@@ -27,7 +27,7 @@ views:
       - type: grid
         columns: 2
         square: false
-        cards: 
+        cards:
           - type: picture-entity
             entity: sensor.rn_status
             image: /local/rhino.jpg
@@ -123,7 +123,7 @@ views:
         - type: grid
           columns: 4
           square: true
-          cards: 
+          cards:
             - type: button
               entity: binary_sensor.door_sensor
               show_icon: true
@@ -163,7 +163,7 @@ views:
             entities:
               - entity: sensor.xiaomi_lywsd02_humidity
                 name: Humidity
-                
+
           - type: custom:mini-graph-card
             show:
               fill: false
@@ -186,7 +186,7 @@ views:
             entities:
               - entity: sensor.humidity_living_room
                 name: Humidity
-                
+
           - type: custom:mini-graph-card
             show:
               fill: false
@@ -232,7 +232,7 @@ views:
             entities:
               - entity: sensor.second_humidity
                 name: Humidity
-                
+
           - type: custom:mini-graph-card
             show:
               fill: false
@@ -299,6 +299,22 @@ views:
                   name: Favorite
                   type: music
               columns: 2
+
+      - type: entities
+        title: Garbage schedule
+        entities:
+          - type: attribute
+            entity: sensor.garbage_schedule
+            attribute: next_visit_day
+            format: relative
+            icon: mdi:delete-outline
+            name: Remaining time
+          - type: attribute
+            entity: sensor.garbage_schedule
+            attribute: next_visit_day
+            format: date
+            icon: mdi:delete
+            name: Next pickup
 
       - type: entities
         title: Counters
