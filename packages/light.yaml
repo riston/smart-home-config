@@ -9,7 +9,64 @@ group:
       - light.light_3
       - light.sonoff_second_floor_light
       - light.sonoff_stairs_light
+      - light.all_rgbw2_lights
       - switch.garage_light
+
+light:
+  - platform: mqtt
+    schema: template
+    name: "RGBW2 Channel 1"
+    command_topic: "shellies/shellyrgbw2-25ED03/white/0/set"
+    state_topic: "shellies/shellyrgbw2-25ED03/white/0/status"
+    command_on_template: >
+      {"turn": "on"
+      {%- if brightness is defined -%}
+      , "brightness": {{brightness | float | multiply(0.3922) | round(0)}}
+      {%- endif -%}
+      {%- if red is defined and green is defined and blue is defined -%}
+      , "red": {{ red }}, "green": {{ green }}, "blue": {{ blue }}
+      {%- endif -%}
+      {%- if white_value is defined -%}
+      , "white": {{ white_value }}
+      {%- endif -%}
+      {%- if effect is defined -%}
+      , "effect": {{ effect }}
+      {%- endif -%}
+      }
+    command_off_template: '{"turn":"off"}'
+    state_template: "{% if value_json.ison %}on{% else %}off{% endif %}"
+    brightness_template: "{{ value_json.brightness | float | multiply(2.55) | round(0) }}"
+    qos: 2
+  - platform: mqtt
+    schema: template
+    name: "RGBW2 Channel 2"
+    command_topic: "shellies/shellyrgbw2-25ED03/white/1/set"
+    state_topic: "shellies/shellyrgbw2-25ED03/white/1/status"
+    command_on_template: >
+      {"turn": "on"
+      {%- if brightness is defined -%}
+      , "brightness": {{brightness | float | multiply(0.3922) | round(0)}}
+      {%- endif -%}
+      {%- if red is defined and green is defined and blue is defined -%}
+      , "red": {{ red }}, "green": {{ green }}, "blue": {{ blue }}
+      {%- endif -%}
+      {%- if white_value is defined -%}
+      , "white": {{ white_value }}
+      {%- endif -%}
+      {%- if effect is defined -%}
+      , "effect": {{ effect }}
+      {%- endif -%}
+      }
+    command_off_template: '{"turn":"off"}'
+    state_template: "{% if value_json.ison %}on{% else %}off{% endif %}"
+    brightness_template: "{{ value_json.brightness | float | multiply(2.55) | round(0) }}"
+    qos: 2
+
+  - platform: group
+    name: "All RGBW2 Lights"
+    entities:
+      - light.RGBW2_Channel_2
+      - light.RGBW2_Channel_1
 
 sensor:
   - platform: template
@@ -50,9 +107,9 @@ automation:
         entity_id: sensor.lights_turned_on_for_two_hours
     action:
       - service: light.turn_off
-        data_template: 
+        data_template:
           entity_id: >
-            {{ state_attr('sensor.lights_turned_on_for_two_hours', 'light_entities') }} 
+            {{ state_attr('sensor.lights_turned_on_for_two_hours', 'light_entities') }}
 
   - id: remote_trigger_pavilion_lights_on
     alias: 'Turn on pavilion lights'

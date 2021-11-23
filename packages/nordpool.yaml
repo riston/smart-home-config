@@ -1,0 +1,7 @@
+# More information about options https://github.com/custom-components/nordpool
+
+sensor:
+  - platform: nordpool
+    VAT: true
+    price_type: MWh
+    region: "EE"

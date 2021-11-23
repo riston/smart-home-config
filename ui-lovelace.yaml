@@ -6,6 +6,8 @@ resources:
     type: module
   - url: /local/community/mini-media-player/mini-media-player-bundle.js
     type: module
+  - url: /local/community/apexcharts-card/apexcharts-card.js
+    type: module
 views:
   - title: Home
     cards:
@@ -93,7 +95,11 @@ views:
                 action: toggle
               entity: light.pavilion
               name: Pavilion
-
+            - type: button
+              tap_action:
+                action: toggle
+              entity: light.all_rgbw2_lights
+              name: Bed LED
 
         - type: markdown
           content: '### Motion'
@@ -151,6 +157,7 @@ views:
             entities:
               - entity: sensor.xiaomi_lywsd02_temperature
                 name: Living room
+
           - type: custom:mini-graph-card
             icon: mdi:water-percent
             show:
@@ -174,6 +181,7 @@ views:
             entities:
               - entity: sensor.temperature_living_room
                 name: Living room - window
+
           - type: custom:mini-graph-card
             icon: mdi:water-percent
             show:
@@ -260,45 +268,66 @@ views:
         columns: 1
         square: false
         cards:
+          - type: custom:apexcharts-card
+            experimental:
+              color_threshold: true
+            graph_span: 24h
+            header:
+              title: Nordpool price today (eur/mWh)
+              show: true
+            span:
+              start: day
+            now:
+              show: true
+              label: Now
+            series:
+              - entity: sensor.nordpool_mwh_ee_eur
+                type: column
+                data_generator: |
+                  return entity.attributes.raw_today.map((start, index) => {
+                    return [new Date(start["start"]).getTime(), entity.attributes.raw_today[index]["value"]];
+                  });
+                color_threshold:
+                  - value: 0
+                    color: green
+                    opacity: 1
+                  - value: 150
+                    color: yellow
+                  - value: 250
+                    color: red
+
+          - type: 'custom:apexcharts-card'
+            experimental:
+              color_threshold: true
+            graph_span: 1d
+            header:
+              title: Nordpool tomorrow (eur/mWh)
+              show: true
+            span:
+              start: day
+              offset: +1d
+            series:
+              - entity: sensor.nordpool_mwh_ee_eur
+                type: column
+                data_generator: |
+                  return entity.attributes.raw_tomorrow.map((start, index) => {
+                    return [new Date(start["start"]).getTime(), entity.attributes.raw_tomorrow[index]["value"]];
+                  });
+                color_threshold:
+                  - value: 0
+                    color: green
+                    opacity: 1
+                  - value: 150
+                    color: yellow
+                  - value: 250
+                    color: red
+      - type: grid
+        columns: 1
+        square: false
+        cards:
           - type: 'custom:mini-media-player'
             artwork: material
             entity: media_player.webos_tv
-          - type: 'custom:mini-media-player'
-            artwork: material
-            entity: media_player.risto_s_echo_dot
-          - type: 'custom:mini-media-player'
-            source: icon
-            entity: media_player.mpd
-            artwork: material
-            hide:
-              info: false
-              power_state: false
-              source: false
-              volume: false
-            shortcuts:
-              buttons:
-                - id: 'https://router.euddn.net/8103046e16b71d15d692b57c187875c7/elmar.aac'
-                  name: Elmar
-                  type: music
-                - id: 'https://sky.babahhcdn.com/RETRO'
-                  name: Retro FM
-                  type: music
-                - id: 'https://ice.leviracloud.eu/star96-aac'
-                  name: Star FM
-                  type: music
-                - id: 'https://striiming.trio.ee/myhits.mp3'
-                  name: My Hits
-                  type: music
-                - id: 'https://ice.leviracloud.eu/phr96-aac'
-                  name: Power Hit
-                  type: music
-                - id: Christmas
-                  name: Christmas
-                  type: playlist
-                - id: ''
-                  name: Favorite
-                  type: music
-              columns: 2
 
       - type: entities
         title: Garbage schedule

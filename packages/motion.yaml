@@ -112,3 +112,34 @@ automation:
     action:
       - service: light.turn_on
         entity_id: light.sonoff_stairs_light
+
+  # Under bed LED stripes
+  - alias: 'Turn under bed LED lights off'
+    trigger:
+    - entity_id: binary_sensor.tradfri_motion_sensor
+      for:
+        seconds: 80
+      platform: state
+      to: 'off'
+    condition: []
+    action:
+      - service: light.turn_off
+        entity_id: light.all_rgbw2_lights
+
+  - alias: 'Turn under bed LED light on'
+    trigger:
+    - entity_id: binary_sensor.tradfri_motion_sensor
+      from: 'off'
+      platform: state
+      to: 'on'
+    condition:
+      condition: or
+      conditions:
+      - condition: sun
+        after: sunset
+        after_offset: '-02:00:00'
+      - condition: sun
+        before: sunrise
+    action:
+      - service: light.turn_on
+        entity_id: light.all_rgbw2_lights
