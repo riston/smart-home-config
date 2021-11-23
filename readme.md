@@ -49,6 +49,6 @@ Requires installing Deconz addon.
 - [x] ZigBee/Z-Wave - current devices mostly use Wifi or RF433 Mhz for communication. (Using Conbee II stick with Zigbee support)
 - [x] Configuration split into smaller chuncks [WIP]
 - [x] Move from RaspberryPI SD card to SSD(120 - 250GB), SD cards tend to wear out when under heavy small writes (worst case scenario would be SD card remains in read only mode). After wearing out two premium SD cards it made sense to switch to SSD.
-- [ ] Wifi network mesh and expanding usage range(probably needs new hardware, AP x 2, router, switch)
+- [x] Wifi network mesh and expanding usage range(probably needs new hardware, AP x 2, router, switch)
 - [ ] Separate MQTT broker from single RaspberryPi setup
 - [ ] LoRa experiment (currently not needed)
