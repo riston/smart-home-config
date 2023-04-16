@@ -1,15 +1,14 @@
-
 - id: mqtt-discovery
   alias: Enable MQTT discovery for all devices
   trigger:
     platform: homeassistant
     event: start
   action:
-  - service: mqtt.publish
-    data:
-      topic: sonoffs/cmnd/SetOption19
-      payload: '1'
-      
+    - service: mqtt.publish
+      data:
+        topic: sonoffs/cmnd/SetOption19
+        payload: "0"
+
 - alias: "Power state on HA start-up"
   trigger:
     platform: homeassistant
@@ -28,36 +27,36 @@
     - service: mqtt.publish
       data:
         topic: sonoffs/cmnd/POWER3
-    
+
 - id: sunrise-notify
-  alias: 'Send notification when sun rises'
+  alias: "Send notification when sun rises"
   trigger:
     platform: sun
     event: sunrise
-    offset: '-01:00:00'
+    offset: "-01:00:00"
   action:
     service: notify.webos_tv
     data:
-      message: 'Päike tõuseb tunni aja pärast.'
+      message: "Päike tõuseb tunni aja pärast."
 
 - id: sunset-notify
-  alias: 'Send notification when sun sets'
+  alias: "Send notification when sun sets"
   trigger:
     platform: sun
     event: sunset
-    offset: '-01:00:00'
+    offset: "-01:00:00"
   action:
     service: notify.webos_tv
     data:
-      message: 'Päike loojub tunni aja pärast.'
+      message: "Päike loojub tunni aja pärast."
 
 - id: rfbridge_demultiplexer
-  alias: 'rfbridge_demultiplexer'
-  initial_state: 'true'
+  alias: "rfbridge_demultiplexer"
+  initial_state: "true"
   trigger:
-  - platform: mqtt
-    topic: sonoff-bridge/tele/RESULT
+    - platform: mqtt
+      topic: sonoff-bridge/tele/RESULT
   action:
-  - service: python_script.rfbridge_demux
-    data_template:
-      payload: '{{trigger.payload_json.RfReceived.Data}}'
+    - service: python_script.rfbridge_demux
+      data_template:
+        payload: "{{trigger.payload_json.RfReceived.Data}}"

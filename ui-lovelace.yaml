@@ -17,14 +17,24 @@ views:
         cards:
           - type: picture-glance
             title: Front
-            aspect_ratio: '16:9'
+            aspect_ratio: "16:9"
             entities: []
             camera_image: camera.mjpeg_camera
+          - type: picture-glance
+            title: First camera
+            aspect_ratio: "16:9"
+            entities: []
+            camera_image: camera.first_camera
+          - type: picture-glance
+            title: Second camera
+            aspect_ratio: "16:9"
+            entities: []
+            camera_image: camera.second_camera
           - type: weather-forecast
             entity: weather.home
           - type: iframe
             aspect_ratio: 100%
-            url: 'https://embed.windy.com/embed2.html?rain,59.3543993,26.3667541,8'
+            url: "https://embed.windy.com/embed2.html?rain,59.3543993,26.3667541,8"
 
       - type: grid
         columns: 2
@@ -33,7 +43,7 @@ views:
           - type: picture-entity
             entity: sensor.rn_status
             image: /local/rhino.jpg
-            aspect_ratio: '16x9'
+            aspect_ratio: "16x9"
             state_filter:
               "Home": brightness(110%) saturate(1.2)
               "Away": brightness(50%)
@@ -43,7 +53,7 @@ views:
           - type: picture-entity
             entity: sensor.rv_status
             image: /local/tiger.jpg
-            aspect_ratio: '16x9'
+            aspect_ratio: "16x9"
             state_filter:
               "Home": brightness(110%) saturate(1.2)
               "Away": brightness(50%)
@@ -52,96 +62,99 @@ views:
 
       - type: vertical-stack
         cards:
-        - type: markdown
-          content: '### Light'
-        - type: grid
-          columns: 4
-          square: true
-          cards:
-            - type: button
-              tap_action:
-                action: toggle
-              entity: light.sonoff_stairs_light
-              name: Stairs
-              show_icon: true
-            - type: button
-              tap_action:
-                action: toggle
-              entity: light.bedroom_light
-              name: Bedroom
-            - type: button
-              tap_action:
-                action: toggle
-              entity: light.sonoff
-              name: TV
-            - type: button
-              tap_action:
-                action: toggle
-              entity: light.sonoff_second_floor_light
-              name: Second floor
-            - type: button
-              tap_action:
-                action: toggle
-              entity: light.outdoor_lights
-              name: Outdoor
-            - type: button
-              tap_action:
-                action: toggle
-              entity: switch.garage_light
-              name: Garage
-              icon: 'hass:lightbulb'
-            - type: button
-              tap_action:
-                action: toggle
-              entity: light.pavilion
-              name: Pavilion
-            - type: button
-              tap_action:
-                action: toggle
-              entity: light.all_rgbw2_lights
-              name: Bed LED
+          - type: markdown
+            content: "### Light"
+          - type: grid
+            columns: 4
+            square: true
+            cards:
+              - type: button
+                tap_action:
+                  action: toggle
+                entity: light.sonoff_stairs_light
+                name: Stairs
+                show_icon: true
+              - type: button
+                tap_action:
+                  action: toggle
+                entity: light.bedroom_light
+                name: Bedroom
+              - type: button
+                tap_action:
+                  action: toggle
+                entity: light.sonoff_tv_light
+                name: TV
+              - type: button
+                tap_action:
+                  action: toggle
+                entity: light.sonoff_second_floor_light
+                name: Second floor
+              - type: button
+                tap_action:
+                  action: toggle
+                entity: light.outdoor_lights
+                name: Outdoor
+              - type: button
+                tap_action:
+                  action: toggle
+                entity: light.pavilion
+                name: Pavilion
+              - type: button
+                tap_action:
+                  action: toggle
+                entity: light.all_rgbw2_lights
+                name: Bed LED
 
-        - type: markdown
-          content: '### Motion'
-        - type: grid
-          columns: 4
-          square: true
-          cards:
-            - type: button
-              entity: binary_sensor.kitchen_motion
-              show_icon: true
-              name: Kitchen
-            - type: button
-              entity: binary_sensor.staircase_motion
-              show_icon: true
-              name: Stairs
-            - type: button
-              entity: binary_sensor.xiaomi_motion
-              show_icon: true
-              name: Middle
-            - type: button
-              entity: binary_sensor.tradfri_motion_sensor
-              show_icon: true
-              name: RN Office
+          - type: markdown
+            content: "### Motion"
+          - type: grid
+            columns: 4
+            square: true
+            cards:
+              - type: button
+                entity: binary_sensor.kitchen_motion
+                show_icon: true
+                name: Kitchen
+              - type: button
+                entity: binary_sensor.staircase_motion
+                show_icon: true
+                name: Stairs
+              - type: button
+                entity: binary_sensor.xiaomi_motion
+                show_icon: true
+                name: Middle
+              - type: button
+                entity: binary_sensor.tradfri_motion_sensor
+                show_icon: true
+                name: RN Office
+              - type: button
+                name: CAM I Motion
+                entity: binary_sensor.cam1_motion_detection
+              - type: button
+                name: CAM II Vehicle
+                entity: binary_sensor.cam2_vehicle_detection
+              - type: button
+                name: CAM II Person
+                entity: binary_sensor.cam2_person_detection
 
-        - type: markdown
-          content: '### Door/window & other'
-        - type: grid
-          columns: 4
-          square: true
-          cards:
-            - type: button
-              entity: binary_sensor.door_sensor
-              show_icon: true
-              name: Door
-            - type: button
-              entity: binary_sensor.hall_door_sensor
-              show_icon: true
-              name: Hall
-            - type: button
-              entity: binary_sensor.water_leak
-              show_icon: true
-              name: Boiler
+          - type: markdown
+            content: "### Door/window & other"
+          - type: grid
+            columns: 4
+            square: true
+            cards:
+              - type: button
+                entity: binary_sensor.door_sensor
+                show_icon: true
+                name: Door
+              - type: button
+                entity: binary_sensor.hall_door_sensor
+                show_icon: true
+                name: Hall
+              - type: button
+                entity: binary_sensor.water_leak
+                show_icon: true
+                name: Boiler
 
       - type: grid
         columns: 2
@@ -264,86 +277,68 @@ views:
               - entity: sensor.mijia_humidity
                 name: Humidity
 
-      - type: grid
-        columns: 1
-        square: false
-        cards:
-          - type: custom:apexcharts-card
-            experimental:
-              color_threshold: true
-            graph_span: 24h
-            header:
-              title: Nordpool price today (eur/mWh)
-              show: true
-            span:
-              start: day
-            now:
-              show: true
-              label: Now
-            series:
-              - entity: sensor.nordpool_mwh_ee_eur
-                type: column
-                data_generator: |
-                  return entity.attributes.raw_today.map((start, index) => {
-                    return [new Date(start["start"]).getTime(), entity.attributes.raw_today[index]["value"]];
-                  });
-                color_threshold:
-                  - value: 0
-                    color: green
-                    opacity: 1
-                  - value: 150
-                    color: yellow
-                  - value: 250
-                    color: red
+      # - type: grid
+      #   columns: 1
+      #   square: false
+      #   cards:
+      #     - type: custom:apexcharts-card
+      #       # experimental:
+      #       #   color_threshold: true
+      #       graph_span: 1d
+      #       header:
+      #         title: Nordpool price today and tomorrow (eur/mWh)
+      #         show: true
+      #       span:
+      #         start: day
+      #       now:
+      #         show: true
+      #         label: Now
+      #       series:
+      #         - entity: sensor.nordpool_mwh_ee_eur
+      #           type: column
+      #           name: Today
+      #           show:
+      #             legend_value: false
+      #             in_header: false
+      #           data_generator: |
+      #             return entity.attributes.raw_today.map((start, index) => {
+      #               return [new Date(start["start"]).getTime(), entity.attributes.raw_today[index]["value"]];
+      #             });
+      #           color_threshold:
+      #             - value: 0
+      #               color: green
+      #               opacity: 1
+      #             - value: 150
+      #               color: yellow
+      #             - value: 250
+      #               color: red
 
-          - type: 'custom:apexcharts-card'
-            experimental:
-              color_threshold: true
-            graph_span: 1d
-            header:
-              title: Nordpool tomorrow (eur/mWh)
-              show: true
-            span:
-              start: day
-              offset: +1d
-            series:
-              - entity: sensor.nordpool_mwh_ee_eur
-                type: column
-                data_generator: |
-                  return entity.attributes.raw_tomorrow.map((start, index) => {
-                    return [new Date(start["start"]).getTime(), entity.attributes.raw_tomorrow[index]["value"]];
-                  });
-                color_threshold:
-                  - value: 0
-                    color: green
-                    opacity: 1
-                  - value: 150
-                    color: yellow
-                  - value: 250
-                    color: red
+      #         - entity: sensor.nordpool_mwh_ee_eur
+      #           type: column
+      #           name: Tomorrow
+      #           offset: +1d
+      #           show:
+      #             legend_value: false
+      #             in_header: false
+      #           data_generator: |
+      #             return entity.attributes.raw_tomorrow.map((start, index) => {
+      #               return [new Date(start["start"]).getTime(), entity.attributes.raw_tomorrow[index]["value"]];
+      #             });
+      #           color_threshold:
+      #             - value: 0
+      #               color: green
+      #               opacity: 1
+      #             - value: 150
+      #               color: yellow
+      #             - value: 250
+      #               color: red
+
       - type: grid
         columns: 1
         square: false
         cards:
-          - type: 'custom:mini-media-player'
-            artwork: material
+          - type: media-control
             entity: media_player.webos_tv
-
-      - type: entities
-        title: Garbage schedule
-        entities:
-          - type: attribute
-            entity: sensor.garbage_schedule
-            attribute: next_visit_day
-            format: relative
-            icon: mdi:delete-outline
-            name: Remaining time
-          - type: attribute
-            entity: sensor.garbage_schedule
-            attribute: next_visit_day
-            format: date
-            icon: mdi:delete
-            name: Next pickup
 
       - type: entities
         title: Counters
@@ -353,16 +348,22 @@ views:
           - sensor.hall_door_open_today
           - sensor.main_door_open_today
           - sensor.tv_on_today
-          # - sensor.pow_energy_today
-          - sensor.blitzwolf_socket_energy_today
+          - sensor.io_14757711_3_temperature
+          - sensor.io_14757711_9_temperature
 
-      - type: custom:mini-graph-card
-        entities:
-          - entity: sensor.blitzwolf_socket_energy_power
-        name: PC energy usage
-        icon: mdi:chart-line
-        show:
-          graph: bar
+          - sensor.io_14757711_4_electric_energy_consumption
+          - sensor.io_14757711_6_electric_energy_consumption
+          - sensor.io_14757711_5_electric_energy_consumption
+          # - sensor.pow_energy_today
+          # - sensor.blitzwolf_socket_energy_today
+
+      # - type: custom:mini-graph-card
+      #   entities:
+      #     - entity: sensor.blitzwolf_socket_energy_power
+      #   name: PC energy usage
+      #   icon: mdi:chart-line
+      #   show:
+      #     graph: bar
 
       # List battery levels
       - type: custom:auto-entities
@@ -373,6 +374,7 @@ views:
           show_header_toggle: false
         sort:
           method: state
+          numeric: true
           reverse: true
         filter:
           include:

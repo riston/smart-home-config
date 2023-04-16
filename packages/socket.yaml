@@ -3,7 +3,6 @@ group:
     name: X-mas lights
     entities:
       - switch.ikea_switch
-      - switch.blitzwolf_socket
 
 automation:
   - id: remote-trigger-switches-on

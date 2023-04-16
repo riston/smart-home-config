@@ -1,72 +1,79 @@
+mqtt:
+  # Remote controls
+  # A - 2E1A22
+  # B - 2E1A41
+  # C - 9EEF31
+  # D - 2E1A21
+  binary_sensor:
+    - name: "Remote Control A"
+      state_topic: "home/remote-control-a"
+      device_class: opening
+      off_delay: 1
 
-binary_sensor:
-    # Remote controls
-    # A - 2E1A22
-    # B - 2E1A41
-    # C - 9EEF31
-    # D - 2E1A21
-  - platform: mqtt
-    state_topic: "home/remote-control-a"
-    name: 'Remote Control A'
-    device_class: opening
-    off_delay: 1
+    - name: "Remote Control B"
+      state_topic: "home/remote-control-b"
+      device_class: opening
+      off_delay: 1
 
-  - platform: mqtt
-    state_topic: "home/remote-control-b"
-    name: 'Remote Control B'
-    device_class: opening
-    off_delay: 1
+    - name: "Remote Control C"
+      state_topic: "home/remote-control-c"
+      device_class: opening
+      off_delay: 1
 
-  - platform: mqtt
-    state_topic: "home/remote-control-c"
-    name: 'Remote Control C'
-    device_class: opening
-    off_delay: 1
-
-  - platform: mqtt
-    state_topic: "home/remote-control-d"
-    name: 'Remote Control D'
-    device_class: opening
-    off_delay: 1
+    - name: "Remote Control D"
+      state_topic: "home/remote-control-d"
+      device_class: opening
+      off_delay: 1
 
 automation:
   - id: remote-trigger-a-socket
-    alias: 'Toggle light on remote control'
+    alias: "Toggle light on remote control"
     trigger:
-    - entity_id: binary_sensor.remote_control_a
-      platform: state
-      to: 'on'
+      - entity_id: binary_sensor.remote_control_a
+        platform: state
+        to: "on"
     action:
-    - service: light.toggle
-      entity_id: light.sonoff
+      - service: light.toggle
+        entity_id: light.sonoff_tv_light
 
   - id: remote-trigger-b-socket
-    alias: 'Toggle central light on remote control'
+    alias: "Toggle Jupiter room light on remote control"
     trigger:
-    - entity_id: binary_sensor.remote_control_b
-      platform: state
-      to: 'on'
+      - entity_id: binary_sensor.remote_control_b
+        platform: state
+        to: "on"
     action:
-    - service: switch.toggle
-      entity_id: light.sonoff_stairs_light
+      - service: light.toggle
+        entity_id: light.jupiter_light
 
   - id: remote-trigger-c-socket
-    alias: 'Show temperature in TV'
+    alias: "Toggle central light on remote control"
     trigger:
-    - entity_id: binary_sensor.remote_control_c
-      platform: state
-      to: 'on'
+      - entity_id: binary_sensor.remote_control_c
+        platform: state
+        to: "on"
     action:
-      service: notify.webos_tv
-      data:
-        message: Õues {{ state_attr('weather.home', 'temperature') }}°C - {{ state_attr('weather.home', 'humidity') }}%,  all korrusel {{ states('sensor.temperature_living_room') }} °C - {{ states('sensor.humidity_living_room') }}%, prügikonteiner {{ as_timestamp(state_attr('sensor.garbage_schedule', 'next_visit_day')) |  timestamp_custom("%d.%m", True) }}
+      - service: switch.toggle
+        entity_id: light.sonoff_stairs_light
 
   - id: remote-trigger-d-socket
-    alias: 'Toggle pavilion light'
+    alias: "Toggle pavilion light"
     trigger:
-    - entity_id: binary_sensor.remote_control_d
-      platform: state
-      to: 'on'
+      - entity_id: binary_sensor.remote_control_d
+        platform: state
+        to: "on"
     action:
       service: light.toggle
       entity_id: light.pavilion
+
+  - id: ikea-remote-control-shortcut-light
+    alias: "IKEA remote control shortcut TV light"
+    trigger:
+      - platform: event
+        event_type: deconz_event
+        event_data:
+          id: tradfri_shortcut_button
+          event: 1002
+    action:
+      - service: light.toggle
+        entity_id: light.sonoff_tv_light

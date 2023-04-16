@@ -10,6 +10,7 @@ homeassistant:
   unit_system: metric
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/Tallinn
+  country: EE
   # Include packages
   packages: !include_dir_named packages
   # Customization file
@@ -39,38 +40,11 @@ http:
   ssl_certificate: /ssl/fullchain.pem
   ssl_key: /ssl/privkey.pem
 
-# Checks for available updates
-# Note: This component will send some information about your system to
-# the developers to assist with development of Home Assistant.
-# For more information, please see:
-# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
-updater:
-  # Optional, allows Home Assistant developers to focus on popular components.
-  # include_used_components: true
-
 # Android/iOS companion app
 mobile_app:
 
 # Discover some devices automatically
 discovery:
-
-# Allows you to issue voice commands from the frontend in enabled browsers
-conversation:
-
-alexa:
-  smart_home:
-
-panel_iframe:
-  music:
-    title: 'Pi Music'
-    icon: 'mdi:music-box-outline'
-    url: !secret media_player_host_url
-
-mqtt:
-  broker: !secret home_assistant_host
-  username: !secret mqtt_username
-  password: !secret mqtt_password
-  discovery: true
 
 # Enables support for tracking state changes over time
 history:
@@ -104,10 +78,10 @@ sensor:
   - platform: history_stats
     name: TV On today
     entity_id: media_player.webos_tv
-    state: 'on'
+    state: "on"
     type: time
-    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
-    end: '{{ now() }}'
+    start: "{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}"
+    end: "{{ now() }}"
 
 fastdotcom:
   scan_interval:

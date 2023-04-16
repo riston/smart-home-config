@@ -1,3 +1,28 @@
 camera:
   - platform: mjpeg
     mjpeg_url: !secret home_camera_host
+
+binary_sensor:
+  - platform: rest
+    name: CAM1 - motion detection
+    resource: !secret home_camera_one_host
+    method: GET
+    value_template: "{{ value_json[0].value.state }}"
+    scan_interval: 2
+    device_class: motion
+
+  - platform: rest
+    name: CAM2 - person detection
+    resource: !secret home_camera_two_host
+    method: GET
+    value_template: "{{ value_json[0].value.people.alarm_state }}"
+    scan_interval: 2
+    device_class: motion
+
+  - platform: rest
+    name: CAM2 - vehicle detection
+    resource: !secret home_camera_two_host
+    method: GET
+    value_template: "{{ value_json[0].value.vehicle.alarm_state }}"
+    scan_interval: 2
+    device_class: motion

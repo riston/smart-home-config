@@ -14,59 +14,54 @@ group:
       - binary_sensor.door_sensor
       - binary_sensor.hall_door_sensor
 
-binary_sensor:
-  - platform: mqtt
-    name: 'Fridge Sensor'
-    state_topic: 'home/fridge-door'
-    device_class: Door
+mqtt:
+  binary_sensor:
+    - name: "Fridge Sensor"
+      state_topic: "home/fridge-door"
+      device_class: Door
 
-  - platform: mqtt
-    name: 'Fridge door battery'
-    device_class: 'battery'
-    state_topic: 'home/fridge-door-battery'
-    off_delay: 60
-    qos: 1
+    - name: "Fridge door battery"
+      device_class: "battery"
+      state_topic: "home/fridge-door-battery"
+      off_delay: 60
+      qos: 1
 
-  - platform: mqtt
-    name: 'Hall Door Sensor'
-    state_topic: 'home/hall-door'
-    device_class: Door
+    - name: "Hall Door Sensor"
+      state_topic: "home/hall-door"
+      device_class: Door
 
-  - platform: mqtt
-    name: 'Hall door battery'
-    device_class: 'battery'
-    state_topic: 'home/hall-door-battery'
-    off_delay: 60
-    qos: 1
+    - name: "Hall door battery"
+      device_class: "battery"
+      state_topic: "home/hall-door-battery"
+      off_delay: 60
+      qos: 1
 
-  - platform: mqtt
-    name: 'Door Sensor'
-    state_topic: 'home/door'
-    device_class: Door
+    - name: "Door Sensor"
+      state_topic: "home/door"
+      device_class: Door
 
-  - platform: mqtt
-    name: 'Door battery'
-    device_class: 'battery'
-    state_topic: 'home/door-battery'
-    off_delay: 60
-    qos: 1
+    - name: "Door battery"
+      device_class: "battery"
+      state_topic: "home/door-battery"
+      off_delay: 60
+      qos: 1
 
 sensor:
   - platform: history_stats
     name: Hall Door Open Today
     entity_id: binary_sensor.hall_door_sensor
-    state: 'on'
+    state: "on"
     type: count
-    start: '{{ now().replace(hour=0, minute=0, second=0) }}'
-    end: '{{ now() }}'
+    start: "{{ now().replace(hour=0, minute=0, second=0) }}"
+    end: "{{ now() }}"
 
   - platform: history_stats
     name: Main Door Open Today
     entity_id: binary_sensor.door_sensor
-    state: 'on'
+    state: "on"
     type: count
-    start: '{{ now().replace(hour=0, minute=0, second=0) }}'
-    end: '{{ now() }}'
+    start: "{{ now().replace(hour=0, minute=0, second=0) }}"
+    end: "{{ now() }}"
 
   - platform: template
     sensors:
@@ -82,37 +77,37 @@ sensor:
           {%- endfor %}
           {{ count.value }}
         attribute_templates:
-         door_entities: >
-          {% set nowTime = now() %}
-          {% set sensors_on = expand('group.door_window_sensors') | selectattr('state', 'eq', 'on') %}
-          {% set base_value = states('input_number.door_open_time') | int * 60 %}
-          {% for sensor in sensors_on if as_timestamp(nowTime) - as_timestamp(sensor.last_changed) > (base_value) -%}
-            {{ sensor.name }}{%- if loop.last %} {% else %}, {% endif -%}
-          {%- endfor %}
+          door_entities: >
+            {% set nowTime = now() %}
+            {% set sensors_on = expand('group.door_window_sensors') | selectattr('state', 'eq', 'on') %}
+            {% set base_value = states('input_number.door_open_time') | int * 60 %}
+            {% for sensor in sensors_on if as_timestamp(nowTime) - as_timestamp(sensor.last_changed) > (base_value) -%}
+              {{ sensor.name }}{%- if loop.last %} {% else %}, {% endif -%}
+            {%- endfor %}
 
 automation:
   - alias: Turn low battery message notify
     trigger:
-    - entity_id: binary_sensor.door_battery,
-        binary_sensor.fridge_door_battery,
-        binary_sensor.hall_door_battery
-      from: 'off'
-      to: 'on'
-      platform: state
+      - entity_id: binary_sensor.door_battery,
+          binary_sensor.fridge_door_battery,
+          binary_sensor.hall_door_battery
+        from: "off"
+        to: "on"
+        platform: state
     action:
-    - service: notify.webos_tv
-      data:
-        message: 'Patarei on tühi'
-    - service: persistent_notification.create
-      data:
-          title: 'Patarei on tühi'
-          message: 'patarei saab tühjaks, kontrolli'
+      - service: notify.lg_webos_smart_tv
+        data:
+          message: "Patarei on tühi"
+      - service: persistent_notification.create
+        data:
+          title: "Patarei on tühi"
+          message: "patarei saab tühjaks, kontrolli"
 
   - id: sensor_door_window_update
     alias: "Update the door/window sensors"
     trigger:
       - platform: time_pattern
-        minutes: '/5'
+        minutes: "/5"
     action:
       - service: homeassistant.update_entity
         data:
@@ -124,6 +119,6 @@ automation:
       - platform: state
         entity_id: sensor.open_door_window_sensor
     action:
-      - service: notify.webos_tv
-        data_template: 
+      - service: notify.lg_webos_smart_tv
+        data_template:
           message: "{{ state_attr('sensor.open_door_window_sensor', 'door_entities') | join(',') }} has open for {{ states('input_number.door_open_time') | int }} minutes"

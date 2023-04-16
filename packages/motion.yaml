@@ -1,145 +1,142 @@
+mqtt:
+  sensor:
+    - name: "Moving PIR"
+      state_topic: "home/temperature-sensor-second"
+      value_template: "{{ value_json.motion }}"
+      qos: 1
 
-sensor:
-  - platform: mqtt
-    name: "Moving PIR"
-    state_topic: "home/temperature-sensor-second"
-    value_template: '{{ value_json.motion }}'
-    qos: 1
+  binary_sensor:
+    - name: "Staircase Motion"
+      state_topic: "home/staircase-motion"
+      device_class: motion
+      off_delay: 10
+      qos: 1
 
-binary_sensor:
-  - platform: mqtt
-    name: 'Staircase Motion'
-    state_topic: 'home/staircase-motion'
-    device_class: motion
-    off_delay: 10
-    qos: 1
-
-  - platform: mqtt
-    name: 'Kitchen Motion'
-    state_topic: 'home/kitchen-motion'
-    device_class: motion
-    off_delay: 60
-    qos: 1
+    - name: "Kitchen Motion"
+      state_topic: "home/kitchen-motion"
+      device_class: motion
+      off_delay: 60
+      qos: 1
 
 automation:
   - alias: Turn kitchen light on movement
     trigger:
-    - entity_id: binary_sensor.kitchen_motion
-      platform: state
-      from: 'off'
-      to: 'on'
+      - entity_id: binary_sensor.kitchen_motion
+        platform: state
+        from: "off"
+        to: "on"
     condition:
       condition: or
       conditions:
-      - condition: sun
-        after: sunset
-        after_offset: '-02:00:00'
-      - condition: sun
-        before: sunrise
+        - condition: sun
+          after: sunset
+          after_offset: "-02:00:00"
+        - condition: sun
+          before: sunrise
     action:
       - service: switch.turn_on
         entity_id: switch.pow
 
   - alias: Turn kitchen light off when no movement
     trigger:
-    - entity_id: binary_sensor.kitchen_motion
-      platform: state
-      from: 'on'
-      to: 'off'
+      - entity_id: binary_sensor.kitchen_motion
+        platform: state
+        from: "on"
+        to: "off"
     action:
       - service: switch.turn_off
         entity_id: switch.pow
 
-  - id: '1546613456223'
+  - id: "1546613456223"
     alias: Turn light when there is movement
     trigger:
-    - entity_id: binary_sensor.xiaomi_motion
-      from: 'off'
-      platform: state
-      to: 'on'
+      - entity_id: binary_sensor.xiaomi_motion
+        from: "off"
+        platform: state
+        to: "on"
     condition:
       condition: or
       conditions:
-      - condition: sun
-        after: sunset
-        after_offset: '-02:00:00'
-      - condition: sun
-        before: sunrise
+        - condition: sun
+          after: sunset
+          after_offset: "-02:00:00"
+        - condition: sun
+          before: sunrise
     action:
-    - service: light.turn_on
-      entity_id: light.sonoff_second_floor_light
+      - service: light.turn_on
+        entity_id: light.sonoff_second_floor_light
 
-  - id: '1546615924808'
+  - id: "1546615924808"
     alias: Turn light off after there is no movement
     trigger:
-    - entity_id: binary_sensor.xiaomi_motion
-      from: 'on'
-      platform: state
-      to: 'off'
+      - entity_id: binary_sensor.xiaomi_motion
+        from: "on"
+        platform: state
+        to: "off"
     condition: []
     action:
-    - service: light.turn_off
-      entity_id: light.sonoff_second_floor_light
+      - service: light.turn_off
+        entity_id: light.sonoff_second_floor_light
 
-  - id: '1546613458556'
-    alias: 'Turn socket off on movement'
+  - id: "1546613458556"
+    alias: "Turn socket off on movement"
     trigger:
-    - entity_id: binary_sensor.staircase_motion
-      for:
-        seconds: 15
-      platform: state
-      to: 'off'
+      - entity_id: binary_sensor.staircase_motion
+        for:
+          seconds: 15
+        platform: state
+        to: "off"
     condition: []
     action:
       - service: light.turn_off
         entity_id: light.sonoff_stairs_light
 
-  - id: '1546613458555'
+  - id: "1546613458555"
     alias: Turn socket on movement
     trigger:
-    - entity_id: binary_sensor.staircase_motion
-      from: 'off'
-      platform: state
-      to: 'on'
+      - entity_id: binary_sensor.staircase_motion
+        from: "off"
+        platform: state
+        to: "on"
     condition:
       condition: or
       conditions:
-      - condition: sun
-        after: sunset
-        after_offset: '-02:00:00'
-      - condition: sun
-        before: sunrise
+        - condition: sun
+          after: sunset
+          after_offset: "-02:00:00"
+        - condition: sun
+          before: sunrise
     action:
       - service: light.turn_on
         entity_id: light.sonoff_stairs_light
 
   # Under bed LED stripes
-  - alias: 'Turn under bed LED lights off'
+  - alias: "Turn under bed LED lights off"
     trigger:
-    - entity_id: binary_sensor.tradfri_motion_sensor
-      for:
-        seconds: 80
-      platform: state
-      to: 'off'
+      - entity_id: binary_sensor.tradfri_motion_sensor
+        for:
+          seconds: 80
+        platform: state
+        to: "off"
     condition: []
     action:
       - service: light.turn_off
         entity_id: light.all_rgbw2_lights
 
-  - alias: 'Turn under bed LED light on'
+  - alias: "Turn under bed LED light on"
     trigger:
-    - entity_id: binary_sensor.tradfri_motion_sensor
-      from: 'off'
-      platform: state
-      to: 'on'
+      - entity_id: binary_sensor.tradfri_motion_sensor
+        from: "off"
+        platform: state
+        to: "on"
     condition:
       condition: or
       conditions:
-      - condition: sun
-        after: sunset
-        after_offset: '-02:00:00'
-      - condition: sun
-        before: sunrise
+        - condition: sun
+          after: sunset
+          after_offset: "-02:00:00"
+        - condition: sun
+          before: sunrise
     action:
       - service: light.turn_on
         entity_id: light.all_rgbw2_lights

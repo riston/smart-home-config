@@ -1,52 +1,48 @@
+mqtt:
+  sensor:
+    - name: "Temperature Living Room"
+      state_topic: "rpi-sensor/tele/STATE"
+      unit_of_measurement: "°C"
+      value_template: "{{ value_json.Temperature }}"
+
+    - name: "Humidity Living Room"
+      state_topic: "rpi-sensor/tele/STATE"
+      unit_of_measurement: "%"
+      value_template: "{{ value_json.Humidity }}"
+
+    - name: "Temperature second"
+      state_topic: "home/temperature-sensor-one"
+      unit_of_measurement: "°C"
+      value_template: "{{ value_json.temperature }}"
+
+    - name: "Humidity second"
+      state_topic: "home/temperature-sensor-one"
+      unit_of_measurement: "%"
+      value_template: "{{ value_json.humidity }}"
+
+    - name: "Temperature first"
+      state_topic: "home/temperature-sensor-second"
+      unit_of_measurement: "°C"
+      value_template: "{{ value_json.temperature }}"
+
+    - name: "Humidity first"
+      state_topic: "home/temperature-sensor-second"
+      unit_of_measurement: "%"
+      value_template: "{{ value_json.humidity }}"
+
 sensor:
-  - platform: mqtt
-    state_topic: 'rpi-sensor/tele/STATE'
-    name: 'Temperature Living Room'
-    unit_of_measurement: '°C'
-    value_template: '{{ value_json.Temperature }}'
-
-  - platform: mqtt
-    state_topic: 'rpi-sensor/tele/STATE'
-    name: 'Humidity Living Room'
-    unit_of_measurement: '%'
-    value_template: '{{ value_json.Humidity }}'
-
-  - platform: mqtt
-    state_topic: 'home/temperature-sensor-one'
-    name: 'Temperature second'
-    unit_of_measurement: '°C'
-    value_template: '{{ value_json.temperature }}'
-
-  - platform: mqtt
-    state_topic: 'home/temperature-sensor-one'
-    name: 'Humidity second'
-    unit_of_measurement: '%'
-    value_template: '{{ value_json.humidity }}'
-
-  - platform: mqtt
-    state_topic: 'home/temperature-sensor-second'
-    name: 'Temperature first'
-    unit_of_measurement: '°C'
-    value_template: '{{ value_json.temperature }}'
-
-  - platform: mqtt
-    state_topic: 'home/temperature-sensor-second'
-    name: 'Humidity first'
-    unit_of_measurement: '%'
-    value_template: '{{ value_json.humidity }}'
-
   - platform: template
     sensors:
       water_leak_temperature:
         value_template: "{{ state_attr('binary_sensor.water', 'temperature') | float }}"
         device_class: temperature
-        unit_of_measurement: '°C'
-        friendly_name: 'Water leak temperature'
+        unit_of_measurement: "°C"
+        friendly_name: "Water leak temperature"
 
   - platform: template
     sensors:
       xiaomi_motion_temperature:
         value_template: "{{ state_attr('sensor.xiaomi_motion', 'temperature') | float }}"
         device_class: temperature
-        unit_of_measurement: '°C'
-        friendly_name: 'Xiaomi motion temperature'
+        unit_of_measurement: "°C"
+        friendly_name: "Xiaomi motion temperature"

@@ -1,38 +1,37 @@
-
-binary_sensor:
-  - platform: mqtt
-    name: "Water Leak"
-    device_class: "moisture"
-    state_topic: "home/water-leak"
-    payload_off: "D83212Off"
-    qos: 1
+mqtt:
+  binary_sensor:
+    - name: "Water Leak"
+      device_class: "moisture"
+      state_topic: "home/water-leak"
+      payload_off: "D83212Off"
+      qos: 1
 
 automation:
   - alias: Turn water leak message on
     trigger:
-    - entity_id: binary_sensor.water_leak
-      from: 'off'
-      to: 'on'
-      platform: state
+      - entity_id: binary_sensor.water_leak
+        from: "off"
+        to: "on"
+        platform: state
     action:
-    - service: notify.webos_tv
-      data:
-        message: "Vee leke !!!"
-    - service: persistent_notification.create
-      data:
-        title: 'Vesi lekib'
-        message: 'Vesi lekib, kontrolli!'
+      - service: notify.lg_webos_smart_tv
+        data:
+          message: "Vee leke !!!"
+      - service: persistent_notification.create
+        data:
+          title: "Vesi lekib"
+          message: "Vesi lekib, kontrolli!"
 
   - alias: Turn water leak off
     trigger:
-    - entity_id: binary_sensor.water_leak
-      from: 'off'
-      to: 'on'
-      for:
-        minutes: 5
-      platform: state
+      - entity_id: binary_sensor.water_leak
+        from: "off"
+        to: "on"
+        for:
+          minutes: 5
+        platform: state
     action:
-    - service: mqtt.publish
-      data:
-        topic: home/water-leak
-        payload: D83212Off
+      - service: mqtt.publish
+        data:
+          topic: home/water-leak
+          payload: D83212Off
