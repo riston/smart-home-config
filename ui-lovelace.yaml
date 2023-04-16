@@ -277,61 +277,61 @@ views:
               - entity: sensor.mijia_humidity
                 name: Humidity
 
-      # - type: grid
-      #   columns: 1
-      #   square: false
-      #   cards:
-      #     - type: custom:apexcharts-card
-      #       # experimental:
-      #       #   color_threshold: true
-      #       graph_span: 1d
-      #       header:
-      #         title: Nordpool price today and tomorrow (eur/mWh)
-      #         show: true
-      #       span:
-      #         start: day
-      #       now:
-      #         show: true
-      #         label: Now
-      #       series:
-      #         - entity: sensor.nordpool_mwh_ee_eur
-      #           type: column
-      #           name: Today
-      #           show:
-      #             legend_value: false
-      #             in_header: false
-      #           data_generator: |
-      #             return entity.attributes.raw_today.map((start, index) => {
-      #               return [new Date(start["start"]).getTime(), entity.attributes.raw_today[index]["value"]];
-      #             });
-      #           color_threshold:
-      #             - value: 0
-      #               color: green
-      #               opacity: 1
-      #             - value: 150
-      #               color: yellow
-      #             - value: 250
-      #               color: red
+      - type: grid
+        columns: 1
+        square: false
+        cards:
+          - type: custom:apexcharts-card
+            # experimental:
+            #   color_threshold: true
+            graph_span: 1d
+            header:
+              title: Nordpool price today and tomorrow (eur/mWh)
+              show: true
+            span:
+              start: day
+            now:
+              show: true
+              label: Now
+            series:
+              - entity: sensor.nordpool_mwh_ee_eur
+                type: column
+                name: Today
+                show:
+                  legend_value: false
+                  in_header: false
+                data_generator: |
+                  return entity.attributes.raw_today.map((start, index) => {
+                    return [new Date(start["start"]).getTime(), entity.attributes.raw_today[index]["value"]];
+                  });
+                color_threshold:
+                  - value: 0
+                    color: green
+                    opacity: 1
+                  - value: 150
+                    color: yellow
+                  - value: 250
+                    color: red
 
-      #         - entity: sensor.nordpool_mwh_ee_eur
-      #           type: column
-      #           name: Tomorrow
-      #           offset: +1d
-      #           show:
-      #             legend_value: false
-      #             in_header: false
-      #           data_generator: |
-      #             return entity.attributes.raw_tomorrow.map((start, index) => {
-      #               return [new Date(start["start"]).getTime(), entity.attributes.raw_tomorrow[index]["value"]];
-      #             });
-      #           color_threshold:
-      #             - value: 0
-      #               color: green
-      #               opacity: 1
-      #             - value: 150
-      #               color: yellow
-      #             - value: 250
-      #               color: red
+              - entity: sensor.nordpool_mwh_ee_eur
+                type: column
+                name: Tomorrow
+                offset: +1d
+                show:
+                  legend_value: false
+                  in_header: false
+                data_generator: |
+                  return entity.attributes.raw_tomorrow.map((start, index) => {
+                    return [new Date(start["start"]).getTime(), entity.attributes.raw_tomorrow[index]["value"]];
+                  });
+                color_threshold:
+                  - value: 0
+                    color: green
+                    opacity: 1
+                  - value: 150
+                    color: yellow
+                  - value: 250
+                    color: red
 
       - type: grid
         columns: 1
