@@ -36,8 +36,8 @@ group:
       - sensor.rv_status
       - sensor.rn_status
 
-device_tracker:
-  - platform: bluetooth_tracker
+# device_tracker:
+#   - platform: bluetooth_tracker
 
 binary_sensor:
   - platform: bayesian

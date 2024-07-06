@@ -36,15 +36,12 @@ system_health:
 config:
 
 # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
-http:
-  ssl_certificate: /ssl/fullchain.pem
-  ssl_key: /ssl/privkey.pem
+# http:
+#   ssl_certificate: /ssl/fullchain.pem
+#   ssl_key: /ssl/privkey.pem
 
 # Android/iOS companion app
 mobile_app:
-
-# Discover some devices automatically
-discovery:
 
 # Enables support for tracking state changes over time
 history:
@@ -83,23 +80,18 @@ sensor:
     start: "{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}"
     end: "{{ now() }}"
 
-fastdotcom:
-  scan_interval:
-    minutes: 60
+  - platform: foxess
+    deviceID: !secret foxesscloud_inverter_id
+    deviceSN: !secret foxesscloud_device_sn
+    apiKey: !secret foxesscloud_api_key
+
+energy:
 
 wake_on_lan:
 
 media_player:
   - platform: mpd
     host: !secret media_player_host
-
-webostv:
-  name: webOS TV
-  host: !secret livingroom_tv_host
-  turn_on_action:
-    service: wake_on_lan.send_magic_packet
-    data:
-      mac: !secret livingroom_mac
 
 telegram_bot:
   - platform: broadcast

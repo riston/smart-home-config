@@ -1,5 +1,0 @@
-# sensor:
-#   - platform: foxess
-#     username: !secret foxesscloud_username
-#     password: !secret foxesscloud_password
-#     deviceID: !secret foxesscloud_inverter_id

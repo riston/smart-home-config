@@ -35,7 +35,7 @@
     event: sunrise
     offset: "-01:00:00"
   action:
-    service: notify.webos_tv
+    service: notify.lg_webos_smart_tv
     data:
       message: "Päike tõuseb tunni aja pärast."
 
@@ -46,7 +46,7 @@
     event: sunset
     offset: "-01:00:00"
   action:
-    service: notify.webos_tv
+    service: notify.lg_webos_smart_tv
     data:
       message: "Päike loojub tunni aja pärast."
 
